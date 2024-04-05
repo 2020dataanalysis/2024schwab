@@ -1,0 +1,73 @@
+{
+    "AAPL": {
+      "assetMainType": "EQUITY",
+      "assetSubType": "COE",
+      "quoteType": "NFL",
+      "realtime": false,
+      "ssid": 1973757747,
+      "symbol": "AAPL",
+      "fundamental": {
+        "avg10DaysVolume": 64544717.0,
+        "avg1YearVolume": 57423789.0,
+        "declarationDate": "2024-02-01T05:00:00Z",
+        "divAmount": 0.96,
+        "divExDate": "2024-02-09T05:00:00Z",
+        "divFreq": 4,
+        "divPayAmount": 0.24,
+        "divPayDate": "2024-02-15T05:00:00Z",
+        "divYield": 0.56461,
+        "eps": 0.0,
+        "fundLeverageFactor": 0.0,
+        "lastEarningsDate": "2024-02-01T05:00:00Z",
+        "nextDivExDate": "2024-05-09T04:00:00Z",
+        "nextDivPayDate": "2024-05-15T04:00:00Z",
+        "peRatio": 26.32
+      },
+      "quote": {
+        "52WeekHigh": 199.62,
+        "52WeekLow": 159.78,
+        "askMICId": "XNAS",
+        "askPrice": 170.2,
+        "askSize": 1,
+        "askTime": 1712188793075,
+        "bidMICId": "XNAS",
+        "bidPrice": 170.11,
+        "bidSize": 3,
+        "bidTime": 1712188793075,
+        "closePrice": 168.84,
+        "highPrice": 170.68,
+        "lastMICId": "XPSX",
+        "lastPrice": 170.15,
+        "lastSize": 99,
+        "lowPrice": 168.58,
+        "mark": 170.11,
+        "markChange": 1.27,
+        "markPercentChange": 0.75219142,
+        "netChange": 1.31,
+        "netPercentChange": 0.77588249,
+        "openPrice": 168.74,
+        "postMarketChange": 0.5,
+        "postMarketPercentChange": 0.29472443,
+        "quoteTime": 1712188793075,
+        "securityStatus": "Unknown",
+        "totalVolume": 47691715,
+        "tradeTime": 1712188642448
+      },
+      "reference": {
+        "cusip": "037833100",
+        "description": "Apple Inc",
+        "exchange": "Q",
+        "exchangeName": "NASDAQ",
+        "isHardToBorrow": false,
+        "isShortable": true,
+        "htbRate": 0.0
+      },
+      "regular": {
+        "regularMarketLastPrice": 169.65,
+        "regularMarketLastSize": 1147,
+        "regularMarketNetChange": 0.81,
+        "regularMarketPercentChange": 0.47974414,
+        "regularMarketTradeTime": 1712174400792
+      }
+    }
+  }

@@ -1,0 +1,114 @@
+{
+    "screeners": [
+      {
+        "description": "INTEL CORP",
+        "volume": 83717976,
+        "lastPrice": 40.33,
+        "netChange": 40.33,
+        "marketShare": 22.45,
+        "totalVolume": 372860048,
+        "trades": 519018,
+        "netPercentChange": 1,
+        "symbol": "INTC"
+      },
+      {
+        "description": "Apple Inc",
+        "volume": 47691715,
+        "lastPrice": 169.65,
+        "netChange": 169.65,
+        "marketShare": 12.79,
+        "totalVolume": 372860048,
+        "trades": 571297,
+        "netPercentChange": 1,
+        "symbol": "AAPL"
+      },
+      {
+        "description": "Amazon.com Inc",
+        "volume": 31046638,
+        "lastPrice": 182.41,
+        "netChange": 182.41,
+        "marketShare": 8.33,
+        "totalVolume": 372860048,
+        "trades": 350799,
+        "netPercentChange": 1,
+        "symbol": "AMZN"
+      },
+      {
+        "description": "Walt Disney Co",
+        "volume": 22480435,
+        "lastPrice": 118.98,
+        "netChange": 118.98,
+        "marketShare": 6.03,
+        "totalVolume": 372860048,
+        "trades": 220737,
+        "netPercentChange": 1,
+        "symbol": "DIS"
+      },
+      {
+        "description": "Cisco Systems Inc",
+        "volume": 22210022,
+        "lastPrice": 48.74,
+        "netChange": 48.74,
+        "marketShare": 5.96,
+        "totalVolume": 372860048,
+        "trades": 97881,
+        "netPercentChange": 1,
+        "symbol": "CSCO"
+      },
+      {
+        "description": "Verizon Communicatn",
+        "volume": 18211835,
+        "lastPrice": 42.84,
+        "netChange": 42.84,
+        "marketShare": 4.88,
+        "totalVolume": 372860048,
+        "trades": 94923,
+        "netPercentChange": 1,
+        "symbol": "VZ"
+      },
+      {
+        "description": "Microsoft Corp",
+        "volume": 16502264,
+        "lastPrice": 420.45,
+        "netChange": 420.45,
+        "marketShare": 4.43,
+        "totalVolume": 372860048,
+        "trades": 337792,
+        "netPercentChange": 1,
+        "symbol": "MSFT"
+      },
+      {
+        "description": "WALMART INC",
+        "volume": 14615103,
+        "lastPrice": 59.43,
+        "netChange": 59.43,
+        "marketShare": 3.92,
+        "totalVolume": 372860048,
+        "trades": 110383,
+        "netPercentChange": 1,
+        "symbol": "WMT"
+      },
+      {
+        "description": "The Coca-Cola Co",
+        "volume": 13672922,
+        "lastPrice": 59.83,
+        "netChange": 59.83,
+        "marketShare": 3.67,
+        "totalVolume": 372860048,
+        "trades": 144855,
+        "netPercentChange": 1,
+        "symbol": "KO"
+      },
+      {
+        "description": "Procter & Gamble",
+        "volume": 9601812,
+        "lastPrice": 156.15,
+        "netChange": 156.15,
+        "marketShare": 2.58,
+        "totalVolume": 372860048,
+        "trades": 127988,
+        "netPercentChange": 1,
+        "symbol": "PG"
+      }
+    ]
+  }
