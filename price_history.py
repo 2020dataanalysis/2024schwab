@@ -1,5 +1,26 @@
-# This script retrieves price history data for a specified stock symbol from a financial API (SchwabAPI) 
-# over a given date range and saves the data to a JSON file.
+"""
+This script retrieves price history data for a given symbol from the Schwab API,
+iterating over a specified date range in 1-day intervals. It saves the retrieved
+candle data to a JSON file and provides functionality to analyze the data, such
+as counting the number of elements for each day. 
+
+Dependencies:
+- Python 3.x
+- Requests library for making HTTP requests
+- oauth_utils module for obtaining access tokens via OAuth authentication
+
+Usage:
+1. Ensure that the required dependencies are installed.
+2. Update the credentials.json file with your Schwab API credentials.
+3. Run the script, providing the appropriate inputs such as the symbol ID and output file name.
+
+Note: This script assumes that the OAuth authentication process has been completed
+      and the access token has been obtained and saved to the access_token.json file.
+"""
+
+
+
+
 
 import json  # Library for working with JSON data
 import os  # Library for interacting with the operating system

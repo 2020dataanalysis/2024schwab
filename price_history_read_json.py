@@ -1,3 +1,26 @@
+"""
+Candle Analysis Tool
+
+This script provides functionality to analyze JSON data containing candle information.
+It reads data from a file, extracts candle details, and performs analysis on the dataset,
+including counting the number of candles for each day and providing summary statistics.
+
+Author: Sam Portillo
+
+Usage:
+    - Ensure the JSON file containing candle data is available.
+    - Set the file path in the 'file_path' variable.
+    - Run the script.
+    - This script does not work on (visually beautified) formatted data.
+"""
+
+import json
+import datetime
+import os
+from collections import defaultdict
+
+# Function definitions...
+
 import json
 import datetime
 import os
