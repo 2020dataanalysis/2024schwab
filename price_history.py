@@ -1,9 +1,12 @@
-import json
-import os
-import requests
-import time
-import datetime
-from oauth_utils import OAuthClient, save_access_token
+# This script retrieves price history data for a specified stock symbol from a financial API (SchwabAPI) 
+# over a given date range and saves the data to a JSON file.
+
+import json  # Library for working with JSON data
+import os  # Library for interacting with the operating system
+import requests  # Library for making HTTP requests
+import time  # Library for working with time-related functions
+import datetime  # Library for working with date and time data
+from oauth_utils import OAuthClient, save_access_token  # Custom module for OAuth authentication
 
 # Function to convert datetime to epoch format (milliseconds)
 def datetime_to_epoch(dt):
@@ -17,6 +20,7 @@ def get_price_history(base_url, access_token, symbol, start_timestamp, end_times
 
     endpoint = f"{base_url}/pricehistory"
 
+    # Define parameters for the API request
     params = {
         'symbol': symbol,
         'periodType': 'day',
@@ -28,24 +32,28 @@ def get_price_history(base_url, access_token, symbol, start_timestamp, end_times
         'needPreviousClose': False
     }
 
+    # Send a GET request to the API
     response = requests.get(endpoint, headers=headers, params=params)
+
+    # Check if the request was successful (status code 200)
     if response.status_code == 200:
-        return response.json()
+        return response.json()  # Return the JSON response
     else:
         print("Failed to get price history. Error:", response.text)
         return None
 
 # Function to retrieve access token
 def get_access_token(access_token_file, app_key, app_secret, redirect_uri, token_url):
+    # Check if the access token file exists
     if os.path.exists(access_token_file):
         with open(access_token_file, 'r') as file:
             access_token_data = json.load(file)
             token = access_token_data.get('access_token')
             expiration_time = access_token_data.get('expiration_time')
 
+            # Check if the access token is valid and not expired
             if token and expiration_time:
                 current_time = int(time.time())
-                # Check if access token is still valid
                 if current_time < expiration_time:
                     print("Using existing access token.")
                     return token
@@ -85,8 +93,8 @@ def is_token_valid(access_token_file):
         print(f"File '{access_token_file}' not found.")
         return False
 
-# Main function to iterate over 2023 in 1-day intervals and retrieve price history
-def iterate_over_year(base_url, credentials_file, access_token_file, symbol_id, output_file):
+# Main function to iterate over a date range and retrieve price history
+def iterate_over_dates(base_url, credentials_file, access_token_file, symbol_id, output_file):
     with open(credentials_file, 'r') as file:
         credentials = json.load(file)
         app_key = credentials.get('app_key')
@@ -99,17 +107,16 @@ def iterate_over_year(base_url, credentials_file, access_token_file, symbol_id, 
 
         token_url = 'https://api.schwabapi.com/v1/oauth/token'
 
-        # Define start and end dates for the year 2023
+        # Define start and end dates
         start_date = datetime.datetime(2024, 4, 1)
         end_date = datetime.datetime(2024, 4, 8)
 
-        # Initialize an empty list to store candles data and a set to store unique timestamps
+        # Initialize an empty list to store candles data
         all_candles = []
-        unique_timestamps = set()
 
         # Open output file in append mode
         with open(output_file, 'a') as f:
-            # Iterate over the year in 1-day intervals
+            # Iterate over the date range
             current_date = start_date
             while current_date <= end_date:
                 # Convert dates to epoch format (milliseconds)
@@ -123,24 +130,20 @@ def iterate_over_year(base_url, credentials_file, access_token_file, symbol_id, 
                     # Retrieve price history for the current day
                     price_history = get_price_history(base_url, access_token, symbol_id, start_timestamp, end_timestamp, period)
                     
+                    # Check if price history data is available and contains candles
                     if price_history and "candles" in price_history:
-                        num_candles = len(price_history["candles"])
-                        print(f"Retrieved {num_candles} candles for:", current_date.date())
-
-                        # Add human-readable date and time keys
+                        # Add human-readable date and time keys to each candle
                         for candle in price_history["candles"]:
                             candle_datetime = datetime.datetime.fromtimestamp(candle["datetime"] / 1000)
                             candle["human_readable_date"] = candle_datetime.strftime("%Y-%m-%d")
                             candle["human_readable_time"] = candle_datetime.strftime("%H:%M:%S")
 
-                            # Check if the timestamp is already in the set of unique timestamps
-                            if candle["datetime"] not in unique_timestamps:
-                                # Append the candle to the list and add its timestamp to the set
-                                all_candles.append(candle)
-                                unique_timestamps.add(candle["datetime"])
+                        # Append candles data to the list
+                        all_candles.extend(price_history["candles"])
                         
                         # Print message indicating successful retrieval
                         print("Retrieved price history for:", current_date.date())
+                        print("Number of candles:", len(price_history["candles"]))  # Print number of candles
                     else:
                         print("Failed to retrieve price history for:", current_date.date())
                 else:
@@ -162,5 +165,5 @@ if __name__ == "__main__":
     symbol_id = "SPY"
     output_file = "price_history.json"  # Output file name
 
-    # Call the main function to iterate over the year 2023 and retrieve price history
-    iterate_over_year(base_url, credentials_file, access_token_file, symbol_id, output_file)
+    # Call the main function to iterate over the date range and retrieve price history
+    iterate_over_dates(base_url, credentials_file, access_token_file, symbol_id, output_file)
