@@ -73,17 +73,15 @@ class OAuthClient:
     def authenticate_and_get_access_token(self):
         print("Access token is not available or has expired.")
         # Prompt the user to authenticate and obtain a new access token
-        response = input("Do you want to authenticate and obtain a new access token? (yes/no): ")
-        if response.lower() == 'yes':
-            access_token_response = self.get_access_token(self.token_url)
-            if access_token_response:
-                # Save the new access token to file
-                self.save_access_token(access_token_response)
-                print("New access token saved successfully.")
-            else:
-                print("Failed to obtain a new access token.")
+        # response = input("Do you want to authenticate and obtain a new access token? (yes/no): ")
+        # if response.lower() == 'yes':
+        access_token_response = self.get_access_token(self.token_url)
+        if access_token_response:
+            # Save the new access token to file
+            self.save_access_token(access_token_response)
+            print("New access token saved successfully.")
         else:
-            print("Exiting script.")
+            print("Failed to obtain a new access token.")
 
     @staticmethod
     def calculate_expiration_time(expires_in):

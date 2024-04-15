@@ -16,9 +16,7 @@ def get_price_history(base_url, access_token, symbol, start_timestamp, end_times
     headers = {
         'Authorization': f'Bearer {access_token}'
     }
-
     endpoint = f"{base_url}/pricehistory"
-    
 
     # Define parameters for the API request
     params = {
@@ -31,22 +29,16 @@ def get_price_history(base_url, access_token, symbol, start_timestamp, end_times
         'needExtendedHoursData': False,
         'needPreviousClose': False
     }
-    print(f'headers: {headers}')
-    print(f'params: {params}')
 
     # Send a GET request to the API
     response = requests.get(endpoint, headers=headers, params=params)
-    print(response)
-
+    
     # Check if the request was successful (status code 200)
     if response.status_code == 200:
         return response.json()  # Return the JSON response
     else:
         print("Failed to get price history. Error:", response.text)
         return None
-
-
-
 
 
 def retrieve_price_history(oauth_client, base_url, symbol_id, start_date, end_date, output_file):
@@ -61,56 +53,51 @@ def retrieve_price_history(oauth_client, base_url, symbol_id, start_date, end_da
     print("Start Date:", start_date)
     print("End Date:", end_date)
 
-    if 1 < 2:
-        # Initialize an empty list to store candles data
-        all_candles = []
+    # Initialize an empty list to store candles data
+    all_candles = []
 
-        # Open output file in append mode
-        with open(output_file, 'a') as f:
-            # Iterate over the date range
-            current_date = start_date
-            while current_date <= end_date:
-                # Convert dates to epoch format (milliseconds)
-                start_timestamp = datetime_to_epoch(current_date)
-                end_timestamp = datetime_to_epoch(current_date)
+    # Open output file in append mode
+    with open(output_file, 'a') as f:
+        # Iterate over the date range
+        current_date = start_date
+        while current_date <= end_date:
+            # Convert dates to epoch format (milliseconds)
+            start_timestamp = datetime_to_epoch(current_date)
+            end_timestamp = datetime_to_epoch(current_date)
 
-                period = 1
-                if access_token:
-                    # Retrieve price history for the current day
-                    price_history = get_price_history(base_url, access_token, symbol_id, start_timestamp, end_timestamp, period)
-                    print(price_history)
+            period = 1
+            if access_token:
+                # Retrieve price history for the current day
+                price_history = get_price_history(base_url, access_token, symbol_id, start_timestamp, end_timestamp, period)
+                print(price_history)
+                
+                # Check if price history data is available and contains candles
+                if price_history and "candles" in price_history:
+                    # Add human-readable date and time keys to each candle
+                    for candle in price_history["candles"]:
+                        candle_datetime = datetime.datetime.fromtimestamp(candle["datetime"] / 1000)
+                        candle["human_readable_date"] = candle_datetime.strftime("%Y-%m-%d")
+                        candle["human_readable_time"] = candle_datetime.strftime("%H:%M:%S")
+
+                    # Append candles data to the list
+                    all_candles.extend(price_history["candles"])
                     
-                    # Check if price history data is available and contains candles
-                    if price_history and "candles" in price_history:
-                        # Add human-readable date and time keys to each candle
-                        for candle in price_history["candles"]:
-                            candle_datetime = datetime.datetime.fromtimestamp(candle["datetime"] / 1000)
-                            candle["human_readable_date"] = candle_datetime.strftime("%Y-%m-%d")
-                            candle["human_readable_time"] = candle_datetime.strftime("%H:%M:%S")
-
-                        # Append candles data to the list
-                        all_candles.extend(price_history["candles"])
-                        
-                        # Print message indicating successful retrieval
-                        print("Retrieved price history for:", current_date.date())
-                        print("Number of candles:", len(price_history["candles"]))  # Print number of candles
-                    else:
-                        print("Failed to retrieve price history for:", current_date.date())
+                    # Print message indicating successful retrieval
+                    print("Retrieved price history for:", current_date.date())
+                    print("Number of candles:", len(price_history["candles"]))  # Print number of candles
                 else:
-                    print("Failed to obtain access token.")
+                    print("Failed to retrieve price history for:", current_date.date())
+            else:
+                print("Failed to obtain access token.")
 
-                # Move to the next day
-                current_date += datetime.timedelta(days=period)
+            # Move to the next day
+            current_date += datetime.timedelta(days=period)
 
-            # Create a dictionary with "candles" key containing all the candles data
-            output_data = {"candles": all_candles}
-            
-            # Write the output data to the file
-            json.dump(output_data, f)
-
-
-
-
+        # Create a dictionary with "candles" key containing all the candles data
+        output_data = {"candles": all_candles}
+        
+        # Write the output data to the file
+        json.dump(output_data, f)
 
 
 def iterate_over_dates(oauth_client, base_url, symbol_id, output_file):
