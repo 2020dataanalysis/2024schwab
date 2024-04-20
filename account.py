@@ -1,5 +1,3 @@
-# account.py
-
 import json
 from oauth_utils import OAuthClient
 import requests
@@ -19,7 +17,6 @@ class AccountClient:
         :param token_url: URL for obtaining access token.
         """
         self.oauth_client = OAuthClient(credentials_file, access_token_file, token_url)
-        # self.base_url = base_url
 
     def get_account_info(self, base_url):
         """
@@ -28,7 +25,6 @@ class AccountClient:
         :param account_number: The account number for which to retrieve information.
         :return: Account information JSON if successful, None otherwise.
         """
-        self.base_url = base_url
         # Check if access token is valid
         if not self.oauth_client.is_token_valid():
             # Authenticate and obtain a new access token
@@ -38,19 +34,12 @@ class AccountClient:
         access_token = self.oauth_client.access_token
 
         if access_token:
-            # headers = {
-            #     'Authorization': f'Bearer {access_token}'
-            # }
-
-
             headers = {
-                        'Authorization': f'Bearer {self.oauth_client.access_token}',
-                        'Accept': 'application/json'
-                    }
+                'Authorization': f'Bearer {access_token}',
+                'Accept': 'application/json'
+            }
 
-            endpoint = f"{self.base_url}/accounts/accountNumbers"
-            print(f'headers: {headers}')
-            print(f'endpoint: {endpoint}')
+            endpoint = f"{base_url}/accounts/accountNumbers"
             response = requests.get(endpoint, headers=headers)
 
             if response.status_code == 200:
@@ -89,7 +78,6 @@ if __name__ == "__main__":
     access_token_file = 'access_token.json'
     token_url = 'https://api.schwabapi.com/v1/oauth/token'
     base_url = 'https://api.schwabapi.com/trader/v1'
-    # account_number = '123456789'  # Example account number
 
     # Call main function to fetch account information
     main(credentials_file, access_token_file, token_url, base_url)
