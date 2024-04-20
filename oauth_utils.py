@@ -79,6 +79,7 @@ class OAuthClient:
         if access_token_response:
             # Save the new access token to file
             self.save_access_token(access_token_response)
+            self.access_token = access_token_response['access_token']
             print("New access token saved successfully.")
         else:
             print("Failed to obtain a new access token.")
