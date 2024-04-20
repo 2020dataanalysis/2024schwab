@@ -49,7 +49,8 @@ class OAuthClient:
 
         token_params = {
             'grant_type': 'client_credentials',
-            'redirect_uri': self.redirect_uri
+            'redirect_uri': self.redirect_uri,
+            'scope': 'offline_access'  # Include the offline_access scope
         }
 
         response = requests.post(token_url, data=token_params, headers=headers)
