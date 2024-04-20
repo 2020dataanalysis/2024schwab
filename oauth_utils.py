@@ -23,7 +23,6 @@ class OAuthClient:
             self.app_key = None
             self.app_secret = None
 
-
     def load_access_token(self):
         try:
             # Load the access token from the file
@@ -31,7 +30,6 @@ class OAuthClient:
                 access_token_data = json.load(file)
             self.access_token = access_token_data['access_token']  # Assuming the access token key is 'access_token'
             self.refresh_token = access_token_data.get('refresh_token')  # Load refresh token if available
-
         except FileNotFoundError:
             print(f'Access token file {self.access_token_file} not found.')
             self.access_token = None
@@ -41,9 +39,6 @@ class OAuthClient:
         if not self.app_key or not self.app_secret:
             print("OAuth credentials not found. Please check the credentials file.")
             return None
-
-        if self.refresh_token:
-            return self.refresh_access_token(self.refresh_token)
 
         credentials = f"{self.app_key}:{self.app_secret}"
         encoded_credentials = base64.b64encode(credentials.encode()).decode()
@@ -61,6 +56,8 @@ class OAuthClient:
 
         if response.status_code == 200:
             access_token_response = response.json()
+            if 'refresh_token' not in access_token_response:
+                print("Refresh token not included in the response.")
             expiration_time = self.calculate_expiration_time(access_token_response['expires_in'])
             access_token_response['expiration_time'] = expiration_time
             return access_token_response
