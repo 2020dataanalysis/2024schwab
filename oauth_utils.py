@@ -2,14 +2,12 @@ import json
 import requests
 import base64
 import time
-
+from urllib.parse import unquote
 
 class OAuthClient:
-    def __init__(self, credentials_file, access_token_file, token_url):
+    def __init__(self, credentials_file, access_token_file):
         self.credentials_file = credentials_file
         self.access_token_file = access_token_file
-        self.token_url = token_url
-        # self.redirect_uri = redirect_uri
         self.load_credentials()
         self.load_access_token()
 
@@ -20,6 +18,8 @@ class OAuthClient:
                 self.app_key = credentials.get('app_key')
                 self.app_secret = credentials.get('app_secret')
                 self.redirect_uri = credentials.get('redirect_uri')
+                self.authorization_endpoint = credentials.get('authorization_endpoint')
+                self.token_url = credentials.get('token_url')
         except FileNotFoundError:
             print(f"Credentials file '{self.credentials_file}' not found.")
             self.app_key = None
@@ -38,8 +38,66 @@ class OAuthClient:
 
 
 
+    def calculate_expiration_time(self, expires_in):
+        # Calculate expiration time by adding expires_in seconds to the current time
+        current_time = int(time.time())
+        expiration_time = current_time + int(expires_in)
+        return expiration_time
 
-    def get_refresh_token(self, authorization_code):
+
+
+    def authorization_code_grant_flow(self):
+        self.get_authorization_code()
+        self.get_refresh_token()
+
+
+    def get_authorization_code(self):
+        """
+        Redirects the user to the authorization endpoint and prompts the user to input the authorization code.
+
+        Args:
+            authorization_endpoint (str): The OAuth authorization endpoint URL.
+            client_id (str): The client ID of the OAuth application.
+            redirect_uri (str): The redirect URI where the authorization server will redirect the user after authorization.
+
+        Returns:
+            str: The authorization code obtained from the user.
+        """
+        # Redirect the user to the authorization endpoint
+        authorization_url = (
+            f"{self.authorization_endpoint}?client_id={self.app_key}"
+            f"&redirect_uri={self.redirect_uri}&response_type=code"
+        )
+        print("Please visit the following URL and authorize the application:")
+        print(authorization_url)
+
+        # After user authorization, the authorization code will be obtained via the redirect URI
+        authorization_code_url = input(
+            "Enter the authorization code from the callback URL: "
+        )
+
+        # Find the index of 'code=' and '&session=' in the URL
+        code_index = authorization_code_url.find('code=')
+        session_index = authorization_code_url.find('&session=')
+
+        # Extract the authorization code using the indices
+        if code_index != -1 and session_index != -1:
+            authorization_code_extracted = (
+                authorization_code_url[code_index + len('code='):session_index]
+            )
+        else:
+            # Handle case where either 'code=' or '&session=' is not found
+            authorization_code_extracted = None
+
+        # print("Extracted Authorization Code:", authorization_code_extracted)
+        authorization_code = unquote(authorization_code_extracted)
+        # print("Extracted Authorization Code URL decoded:", authorization_code)
+        self.authorization_code = authorization_code
+        return authorization_code
+
+
+
+    def get_refresh_token(self):
         if not self.app_key or not self.app_secret:
             print("OAuth credentials not found. Please check the credentials file.")
             return None
@@ -52,13 +110,13 @@ class OAuthClient:
         }
         token_params = {
             'grant_type': 'authorization_code',
-            'code': authorization_code,
+            'code': self.authorization_code,
             'redirect_uri': self.redirect_uri
         }
         # headers = {'Authorization': f'Basic {base64.b64encode(bytes(f"{self.app_key}:{self.app_secret}", "utf-8")).decode("utf-8")}', 'Content-Type': 'application/x-www-form-urlencoded'}
-        print(self.token_url)
-        print(f'headers: {headers}')
-        print(token_params)
+        # print(self.token_url)
+        # print(f'headers: {headers}')
+        # print(token_params)
 
         response = requests.post(self.token_url, data=token_params, headers=headers)
         print(response)
@@ -68,18 +126,9 @@ class OAuthClient:
             self.access_token = token_response.get('access_token')
             self.refresh_token = token_response.get('refresh_token')
             return token_response       # May need to return True or 200
-
-            # token_data = response.json()
-            # access_token = token_data.get('access_token')
-            # refresh_token = token_data.get('refresh_token')
-            # print(f'access token: {access_token}')
-            # print(f'refresh token: {refresh_token}')
-            # return access_token, refresh_token
         else:
             print("Failed to obtain access token. Error:", response.text)
             return None
-
-
 
 
 
@@ -110,6 +159,8 @@ class OAuthClient:
             return None
 
     def save_access_token(self, access_token_response):
+        expiration_time = self.calculate_expiration_time(access_token_response['expires_in'])
+        access_token_response['expiration_time'] = expiration_time
         with open(self.access_token_file, 'w') as file:
             json.dump(access_token_response, file)
 
