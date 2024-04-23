@@ -47,8 +47,19 @@ class OAuthClient:
 
 
     def authorization_code_grant_flow(self):
+        # returns:
+        # {
+        #     "expires_in": 1800,
+        #     "token_type": "Bearer",
+        #     "scope": "api",
+        #     "refresh_token": "",
+        #     "access_token": "",
+        #     "id_token": "",
+        #     "expiration_time": 1713904409
+        # }
+
         self.get_authorization_code()
-        self.get_refresh_token()
+        self.exchange_authorization_code_for_tokens()
 
 
     def get_authorization_code(self):
@@ -62,6 +73,17 @@ class OAuthClient:
 
         Returns:
             str: The authorization code obtained from the user.
+                    # returns:
+        # {
+        #     "expires_in": 1800,
+        #     "token_type": "Bearer",
+        #     "scope": "api",
+        #     "refresh_token": "",
+        #     "access_token": "",
+        #     "id_token": "",
+        #     "expiration_time": 1713904409
+        # }
+
         """
         # Redirect the user to the authorization endpoint
         authorization_url = (
@@ -97,7 +119,8 @@ class OAuthClient:
 
 
 
-    def get_refresh_token(self):
+    def exchange_authorization_code_for_tokens(self):
+
         if not self.app_key or not self.app_secret:
             print("OAuth credentials not found. Please check the credentials file.")
             return None
@@ -132,7 +155,16 @@ class OAuthClient:
 
 
 
-    def get_access_token(self):
+    def client_credentials_grant_flow(self):
+        # returns:
+        # {
+        #     "expires_in": 3600,
+        #     "token_type": "Bearer",
+        #     "scope": "api",
+        #     "access_token": "I0.b2F1dGgyLmNkYy5zY2h3YWIuY29t.u8N8IhFHFzBtImflrht1CylwwRVuctgfzDBhvYMVhTg@",
+        #     "expiration_time": 1713904409
+        # }
+
         if not self.app_key or not self.app_secret:
             print("OAuth credentials not found. Please check the credentials file.")
             return None
@@ -166,7 +198,7 @@ class OAuthClient:
 
     def authenticate_and_get_access_token(self):
         print("Access token is not available or has expired.")
-        access_token_response = self.get_access_token()
+        access_token_response = self.client_credentials_grant_flow()
         if access_token_response:
             # Save the new access token to file
             self.save_access_token(access_token_response)
