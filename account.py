@@ -8,7 +8,7 @@ class AccountClient:
     A class to interact with the Schwab API to retrieve account information.
     """
 
-    def __init__(self, credentials_file, access_token_file, token_url, redirect_uri):
+    def __init__(self, credentials_file, token_file):
         """
         Initializes the AccountClient with OAuth credentials.
 
@@ -17,7 +17,7 @@ class AccountClient:
         :param token_url: URL for obtaining access token.
         :param redirect_uri: Redirect URI for OAuth authorization.
         """
-        self.oauth_client = OAuthClient(credentials_file, access_token_file, token_url, redirect_uri)
+        self.oauth_client = OAuthClient(credentials_file, token_file)
 
     def get_account_info(self, base_url):
         """
@@ -27,22 +27,21 @@ class AccountClient:
         :return: Account information JSON if successful, None otherwise.
         """
         # Check if access token is valid
-        if not self.oauth_client.is_token_valid():
-            # Authenticate and obtain a new access token
-            self.oauth_client.authenticate_and_get_access_token()
+        # if not self.oauth_client.is_token_valid():
+        #     # Authenticate and obtain a new access token
+        #     self.oauth_client.authenticate_and_get_access_token()
 
-        # Get access token
-        access_token = self.oauth_client.access_token
 
-        if access_token:
+        if self.oauth_client.access_token:
             headers = {
-                'Authorization': f'Bearer {access_token}',
+                'Authorization': f'Bearer {self.oauth_client.access_token}',
                 'Accept': 'application/json'
             }
 
             endpoint = f"{base_url}/accounts/accountNumbers"
             response = requests.get(endpoint, headers=headers)
-
+            print(endpoint)
+            print(response)
             if response.status_code == 200:
                 return response.json()
             else:
@@ -53,7 +52,7 @@ class AccountClient:
             return None
 
 
-def main(credentials_file, access_token_file, token_url, base_url, redirect_uri):
+def main(credentials_file, token_file, base_url):
     """
     The main function to fetch account information using AccountClient.
 
@@ -64,7 +63,7 @@ def main(credentials_file, access_token_file, token_url, base_url, redirect_uri)
     :param redirect_uri: Redirect URI for OAuth authorization.
     """
     # Create AccountClient instance
-    account_client = AccountClient(credentials_file, access_token_file, token_url, redirect_uri)
+    account_client = AccountClient(credentials_file, token_file)
 
     # Get account information
     account_info = account_client.get_account_info(base_url)
@@ -73,13 +72,25 @@ def main(credentials_file, access_token_file, token_url, base_url, redirect_uri)
         print("Account information:", account_info)
 
 
-if __name__ == "__main__":
-    # Define file paths and URLs
-    credentials_file = 'credentials.json'
-    access_token_file = 'access_token.json'
-    token_url = 'https://api.schwabapi.com/v1/oauth/token'
-    base_url = 'https://api.schwabapi.com/trader/v1'
-    redirect_uri = 'https://127.0.0.1'  # Replace with your actual redirect URI
 
-    # Call main function to fetch account information
-    main(credentials_file, access_token_file, token_url, base_url, redirect_uri)
+
+
+
+
+
+if __name__ == "__main__":
+    credentials_file = 'credentials.json'
+    token_file = 'authorization_code_token_data.json'
+
+    # Create OAuthClient instance
+    # oauth_client = OAuthClient(
+    #     credentials_file, token_file
+    # )
+
+    # oauth_client.authorization_code_grant_flow()
+    # print("Access token:", oauth_client.access_token)
+    # print("Refresh token:", oauth_client.refresh_token)
+
+
+    base_url = 'https://api.schwabapi.com/trader/v1'
+    main(credentials_file, token_file, base_url)

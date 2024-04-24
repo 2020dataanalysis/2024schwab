@@ -5,9 +5,9 @@ import time
 from urllib.parse import unquote
 
 class OAuthClient:
-    def __init__(self, credentials_file, access_token_file):
+    def __init__(self, credentials_file, token_file):
         self.credentials_file = credentials_file
-        self.access_token_file = access_token_file
+        self.access_token_file = token_file
         self.load_credentials()
         self.load_access_token()
 
@@ -200,16 +200,16 @@ class OAuthClient:
         with open(self.access_token_file, 'w') as file:
             json.dump(access_token_response, file)
 
-    def authenticate_and_get_access_token(self):
-        print("Access token is not available or has expired.")
-        access_token_response = self.client_credentials_grant_flow()
-        if access_token_response:
-            # Save the new access token to file
-            self.save_access_token(access_token_response)
-            self.access_token = access_token_response['access_token']
-            print("New access token saved successfully.")
-        else:
-            print("Failed to obtain a new access token.")
+    # def authenticate_and_get_access_token(self):
+    #     print("Access token is not available or has expired.")
+    #     access_token_response = self.client_credentials_grant_flow()
+    #     if access_token_response:
+    #         # Save the new access token to file
+    #         self.save_access_token(access_token_response)
+    #         self.access_token = access_token_response['access_token']
+    #         print("New access token saved successfully.")
+    #     else:
+    #         print("Failed to obtain a new access token.")
 
     def is_token_valid(self):
         try:
