@@ -31,7 +31,9 @@ class OAuthClient:
             with open(self.token_file, 'r') as file:
                 access_token_data = json.load(file)
             self.access_token = access_token_data['access_token']
-            self.refresh_token = access_token_data['refresh_token']
+            self.refresh_token = None
+            if 'refresh_token' in access_token_data:
+                self.refresh_token = access_token_data['refresh_token']
         except FileNotFoundError:
             print(f'Access token file {self.token_file} not found.')
             self.access_token = None
@@ -200,17 +202,12 @@ class OAuthClient:
         access_token_response['expiration_time'] = expiration_time
         with open(self.token_file, 'w') as file:
             json.dump(access_token_response, file)
+        print("New token data saved successfully.")
 
     # def authenticate_and_get_access_token(self):
-    #     # print("Access token is not available or has expired.")
-    #     access_token_response = self.client_credentials_grant_flow()
-    #     if access_token_response:
-    #         # Save the new access token to file
-    #         self.save_access_token(access_token_response)
-    #         self.access_token = access_token_response['access_token']
-    #         print("New access token saved successfully.")
-    #     else:
-    #         print("Failed to obtain a new access token.")
+    #     print("Access token is not available or has expired.")
+    #     self.client_credentials_grant_flow()
+
 
     def is_token_valid(self):
         try:

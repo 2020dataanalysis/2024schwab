@@ -27,10 +27,11 @@ class AccountClient:
         :return: Account information JSON if successful, None otherwise.
         """
         # Check if access token is valid
-        # if not self.oauth_client.is_token_valid():
-        #     # Authenticate and obtain a new access token
-        #     self.oauth_client.authenticate_and_get_access_token()
-
+        if not self.oauth_client.is_token_valid():
+            # Authenticate and obtain a new access token
+            # self.oauth_client.authenticate_and_get_access_token()
+            print('self.client_credentials_grant_flow()')
+            self.oauth_client.client_credentials_grant_flow()
 
         if self.oauth_client.access_token:
             headers = {
@@ -73,14 +74,10 @@ def main(credentials_file, token_file, base_url):
 
 
 
-
-
-
-
-
 if __name__ == "__main__":
     credentials_file = 'credentials.json'
     token_file = 'authorization_code_token_data.json'
+    # token_file = 'client_credentials_token_data.json'
 
     # Create OAuthClient instance
     # oauth_client = OAuthClient(
