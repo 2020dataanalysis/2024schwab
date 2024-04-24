@@ -59,7 +59,24 @@ class OAuthClient:
         # }
 
         self.get_authorization_code()
-        self.exchange_authorization_code_for_tokens()
+        token_response = self.exchange_authorization_code_for_tokens()
+        self.save_access_token(token_response)
+        self.access_token = token_response.get('access_token')
+        self.refresh_token = token_response.get('refresh_token')
+
+
+    def client_credentials_grant_flow(self):
+        #         {
+        #     "expires_in": "3600",
+        #     "token_type": "Bearer",
+        #     "scope": "api",
+        #     "access_token": "",
+        #     "expiration_time": 1713929225
+        # }
+        token_response = self.client_credentials_grant_flow_request()
+        self.save_access_token(token_response)
+        self.access_token = token_response.get('access_token')
+        # self.refresh_token = token_response.get('refresh_token')
 
 
     def get_authorization_code(self):
@@ -120,7 +137,6 @@ class OAuthClient:
 
 
     def exchange_authorization_code_for_tokens(self):
-
         if not self.app_key or not self.app_secret:
             print("OAuth credentials not found. Please check the credentials file.")
             return None
@@ -145,9 +161,9 @@ class OAuthClient:
         print(response)
         if response.status_code == 200:
             token_response = response.json()
-            self.save_access_token(token_response)
-            self.access_token = token_response.get('access_token')
-            self.refresh_token = token_response.get('refresh_token')
+            # self.save_access_token(token_response)
+            # self.access_token = token_response.get('access_token')
+            # self.refresh_token = token_response.get('refresh_token')
             return token_response       # May need to return True or 200
         else:
             print("Failed to obtain access token. Error:", response.text)
@@ -155,7 +171,7 @@ class OAuthClient:
 
 
 
-    def client_credentials_grant_flow(self):
+    def client_credentials_grant_flow_request(self):
         # returns:
         # {
         #     "expires_in": 3600,
@@ -184,8 +200,8 @@ class OAuthClient:
         response = requests.post(self.token_url, data=token_params, headers=headers)
 
         if response.status_code == 200:
-            access_token_response = response.json()
-            return access_token_response
+            token_response = response.json()
+            return token_response
         else:
             print("Failed to obtain access token. Error:", response.text)
             return None
