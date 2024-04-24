@@ -7,7 +7,7 @@ from urllib.parse import unquote
 class OAuthClient:
     def __init__(self, credentials_file, token_file):
         self.credentials_file = credentials_file
-        self.access_token_file = token_file
+        self.token_file = token_file
         self.load_credentials()
         self.load_access_token()
 
@@ -28,11 +28,12 @@ class OAuthClient:
     def load_access_token(self):
         try:
             # Load the access token from the file
-            with open(self.access_token_file, 'r') as file:
+            with open(self.token_file, 'r') as file:
                 access_token_data = json.load(file)
-            self.access_token = access_token_data['access_token']  # Assuming the access token key is 'access_token'
+            self.access_token = access_token_data['access_token']
+            self.refresh_token = access_token_data['refresh_token']
         except FileNotFoundError:
-            print(f'Access token file {self.access_token_file} not found.')
+            print(f'Access token file {self.token_file} not found.')
             self.access_token = None
             self.refresh_token = None
 
@@ -197,11 +198,11 @@ class OAuthClient:
     def save_access_token(self, access_token_response):
         expiration_time = self.calculate_expiration_time(access_token_response['expires_in'])
         access_token_response['expiration_time'] = expiration_time
-        with open(self.access_token_file, 'w') as file:
+        with open(self.token_file, 'w') as file:
             json.dump(access_token_response, file)
 
     # def authenticate_and_get_access_token(self):
-    #     print("Access token is not available or has expired.")
+    #     # print("Access token is not available or has expired.")
     #     access_token_response = self.client_credentials_grant_flow()
     #     if access_token_response:
     #         # Save the new access token to file
@@ -213,7 +214,7 @@ class OAuthClient:
 
     def is_token_valid(self):
         try:
-            with open(self.access_token_file, 'r') as file:
+            with open(self.token_file, 'r') as file:
                 access_token_data = json.load(file)
 
             expiration_time = access_token_data.get('expiration_time')
@@ -230,5 +231,5 @@ class OAuthClient:
                 print("Expiration time not found in access token data.")
                 return False
         except FileNotFoundError:
-            print(f"File '{self.access_token_file}' not found.")
+            print(f"File '{self.token_file}' not found.")
             return False
