@@ -37,13 +37,11 @@ class OAuthClient:
             self.refresh_token = None
 
 
-
     def calculate_expiration_time(self, expires_in):
         # Calculate expiration time by adding expires_in seconds to the current time
         current_time = int(time.time())
         expiration_time = current_time + int(expires_in)
         return expiration_time
-
 
 
     def authorization_code_grant_flow(self):
@@ -76,7 +74,6 @@ class OAuthClient:
         token_response = self.client_credentials_grant_flow_request()
         self.save_access_token(token_response)
         self.access_token = token_response.get('access_token')
-        # self.refresh_token = token_response.get('refresh_token')
 
 
     def get_authorization_code(self):
@@ -135,7 +132,6 @@ class OAuthClient:
         return authorization_code
 
 
-
     def exchange_authorization_code_for_tokens(self):
         if not self.app_key or not self.app_secret:
             print("OAuth credentials not found. Please check the credentials file.")
@@ -153,22 +149,14 @@ class OAuthClient:
             'redirect_uri': self.redirect_uri
         }
         # headers = {'Authorization': f'Basic {base64.b64encode(bytes(f"{self.app_key}:{self.app_secret}", "utf-8")).decode("utf-8")}', 'Content-Type': 'application/x-www-form-urlencoded'}
-        # print(self.token_url)
-        # print(f'headers: {headers}')
-        # print(token_params)
-
         response = requests.post(self.token_url, data=token_params, headers=headers)
-        print(response)
+
         if response.status_code == 200:
             token_response = response.json()
-            # self.save_access_token(token_response)
-            # self.access_token = token_response.get('access_token')
-            # self.refresh_token = token_response.get('refresh_token')
             return token_response       # May need to return True or 200
         else:
             print("Failed to obtain access token. Error:", response.text)
             return None
-
 
 
     def client_credentials_grant_flow_request(self):

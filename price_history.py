@@ -81,16 +81,26 @@ def iterate_over_dates(oauth_client, base_url, symbol_id, output_file):
 
 
 if __name__ == "__main__":
-    # Define file paths and URLs
-    credentials_file = "credentials.json"
-    access_token_file = "access_token.json"
-    token_url = 'https://api.schwabapi.com/v1/oauth/token'
+    # File paths for credentials and token data
+    credentials_file = 'credentials.json'
+    token_file = "client_credentials_token_data.json"
+
+    # Create OAuthClient instance with credentials file and token file paths
+    oauth_client = OAuthClient(credentials_file, token_file)
+
+    # Perform client credentials grant flow
+    # oauth_client.client_credentials_grant_flow()
+
+    # Print obtained access token and refresh token
+    print("Access token:", oauth_client.access_token)
+    # print("Refresh token:", oauth_client.refresh_token)
+
     base_url = 'https://api.schwabapi.com/marketdata/v1'
     symbol_id = "SPY"
     output_file = "price_history.json"  # Output file name
 
     # Initialize OAuthClient with credentials and access token file paths, and token URL
-    oauth_client = OAuthClient(credentials_file, access_token_file, token_url)
+    oauth_client = OAuthClient(credentials_file, token_file)
 
     # Call the main function to iterate over the date range and retrieve price history
     iterate_over_dates(oauth_client, base_url, symbol_id, output_file)
