@@ -17,7 +17,7 @@ from oauth_utils import OAuthClient
 
 if __name__ == "__main__":
     credentials_file = 'credentials.json'
-    oauth_tokens_file = 'oauth_tokens.json'
+    oauth_tokens_file = 'authorization_code_token_data.json'
 
     # Create OAuthClient instance
     oauth_client = OAuthClient(
