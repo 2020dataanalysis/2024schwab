@@ -17,11 +17,12 @@ from oauth_utils import OAuthClient
 
 if __name__ == "__main__":
     credentials_file = 'credentials.json'
-    token_file = 'authorization_code_token_data.json'
+    grant_flow_type_filenames_file = 'grant_flow_type_filenames.json'
+    # token_file = 'authorization_code_token_data.json'
 
     # Create OAuthClient instance
     oauth_client = OAuthClient(
-        credentials_file, token_file
+        credentials_file, grant_flow_type_filenames_file
     )
 
     oauth_client.authorization_code_grant_flow()
