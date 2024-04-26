@@ -38,9 +38,9 @@ class OAuthClient:
         try:
             with open(self.grant_flow_type_filenames_file, 'r') as file:
                 self.grant_flow_type_filenames = json.load(file)
-                print("Grant Flow Types and Filenames:")
-                for flow_type, filename in self.grant_flow_type_filenames.items():
-                    print(f"Grant Flow Type: {flow_type}, Filename: {filename}")
+                # print("Grant Flow Types and Filenames:")
+                # for flow_type, filename in self.grant_flow_type_filenames.items():
+                #     print(f"Grant Flow Type: {flow_type}, Filename: {filename}")
 
         except FileNotFoundError:
             print(f"Config file '{self.grant_flow_type_filenames_file}' not found.")
@@ -101,10 +101,6 @@ class OAuthClient:
 
     def get_refresh_access_token(self):
         print('get_refresh_access_token')
-        # if not self.app_key or not self.client_secret or not self.refresh_token:
-            # print("OAuth credentials or refresh token not found. Please check the credentials file.")
-            # return None
-
         credentials = f"{self.app_key}:{self.app_secret}"
         encoded_credentials = base64.b64encode(credentials.encode()).decode()
 
