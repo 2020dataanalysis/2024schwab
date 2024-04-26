@@ -5,14 +5,16 @@ import time
 from urllib.parse import unquote
 
 class OAuthClient:
+    AUTHORIZATION_CODE_KEY = 'AUTHORIZATION_CODE'
+    REFRESH_TOKEN_KEY = 'REFRESH_TOKEN'
+
     def __init__(self, credentials_file, grant_flow_type_filenames_file):
         self.credentials_file = credentials_file
         self.grant_flow_type_filenames_file = grant_flow_type_filenames_file
         self.load_credentials()
         self.load_grant_flow_type_filenames()
-        self.AUTHORIZATION_CODE_GRANT_FILENAME = self.grant_flow_type_filenames['authorization_code_grant']
-        self.REFRESH_TOKEN_GRANT_FILENAME = self.grant_flow_type_filenames['refresh_token_grant']
-        # print('14')
+        self.AUTHORIZATION_CODE_GRANT_FILENAME = self.grant_flow_type_filenames[self.AUTHORIZATION_CODE_KEY]
+        self.REFRESH_TOKEN_GRANT_FILENAME = self.grant_flow_type_filenames[self.REFRESH_TOKEN_KEY]
         # print(self.AUTHORIZATION_CODE_GRANT_FILENAME)
         # print(self.REFRESH_TOKEN_GRANT_FILENAME)
         # self.load_access_token()
@@ -34,12 +36,6 @@ class OAuthClient:
 
     def load_grant_flow_type_filenames(self):
         try:
-            # with open(self.grant_flow_type_filenames_file, 'r') as file:
-            #     self.grant_flow_type_filenames = json.load(file)
-            #     print(self.grant_flow_type_filenames)
-            #     for flow in self.grant_flow_type_filenames:
-            #         print(flow)
-
             with open(self.grant_flow_type_filenames_file, 'r') as file:
                 self.grant_flow_type_filenames = json.load(file)
                 print("Grant Flow Types and Filenames:")
@@ -104,7 +100,7 @@ class OAuthClient:
 
 
     def get_refresh_access_token(self):
-        print('get_refresh_..........')
+        print('get_refresh_access_token')
         # if not self.app_key or not self.client_secret or not self.refresh_token:
             # print("OAuth credentials or refresh token not found. Please check the credentials file.")
             # return None
@@ -120,11 +116,10 @@ class OAuthClient:
 					'grant_type': 'refresh_token',
 					'refresh_token': self.refresh_token
 				}
-        print('152')
         print(headers)
         print(payload)
         print(self.token_url)
-        # response = requests.post(self.token_url, data=token_params)
+
         response = requests.post(self.token_url, headers=headers, data=payload)
         print(response)
 
@@ -278,7 +273,6 @@ class OAuthClient:
         print(f"New token data saved successful: {token_file}")
 
 
-
     def is_token_valid(self, token_file, token):
         try:
             with open(token_file, 'r') as file:
@@ -317,13 +311,9 @@ class OAuthClient:
             self.refresh_token = None
 
 
-
-
-
-
     def manage_tokens(self):
         # Check if access token is valid with Refresh Flow
-        token_file = self.grant_flow_type_filenames['refresh_token_grant']
+        token_file = self.grant_flow_type_filenames[self.REFRESH_TOKEN_KEY]
         print(f'token_file: {token_file}')
         import os
         if os.path.exists(token_file):
@@ -344,20 +334,8 @@ class OAuthClient:
                 else:
                     print('Perform Authorization Code Grant Flow')
                     self.authorization_code_grant_flow()
-
-            # # Check if refresh token is available
-            # if check_refresh_token_validity(oauth_client):
-            #     # Perform token refresh
-            #     oauth_client.refresh_access_token()
-            #     return
         else:
             print(f'File does not Exist: {token_file}')
             print('Perform Authorization Code Grant Flow')
             self.authorization_code_grant_flow()
             return
-
-            # else:
-            #     print('file does not exist')
-
-        # If no refresh token is available, perform authorization code grant flow
-        # oauth_client.authorization_code_grant_flow()
