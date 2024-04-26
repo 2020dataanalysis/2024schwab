@@ -8,7 +8,7 @@ class AccountClient:
     A class to interact with the Schwab API to retrieve account information.
     """
 
-    def __init__(self, credentials_file, token_file):
+    def __init__(self, credentials_file, grant_flow_type_filenames_file):
         """
         Initializes the AccountClient with OAuth credentials.
 
@@ -17,7 +17,12 @@ class AccountClient:
         :param token_url: URL for obtaining access token.
         :param redirect_uri: Redirect URI for OAuth authorization.
         """
-        self.oauth_client = OAuthClient(credentials_file, token_file)
+        self.oauth_client = OAuthClient(credentials_file, grant_flow_type_filenames_file)
+
+        # Manage tokens to ensure continuous access
+        # manage_tokens(oauth_client)
+        # self.oauth_client.manage_tokens()
+
 
     def get_account_info(self, base_url):
         """
@@ -26,12 +31,6 @@ class AccountClient:
         :param account_number: The account number for which to retrieve information.
         :return: Account information JSON if successful, None otherwise.
         """
-        # Check if access token is valid
-        if not self.oauth_client.is_token_valid():
-            # Authenticate and obtain a new access token
-            # self.oauth_client.authenticate_and_get_access_token()
-            print('self.client_credentials_grant_flow()')
-            self.oauth_client.client_credentials_grant_flow()
 
         if self.oauth_client.access_token:
             headers = {
@@ -53,7 +52,7 @@ class AccountClient:
             return None
 
 
-def main(credentials_file, token_file, base_url):
+def main(credentials_file, grant_flow_type_filenames_file, base_url):
     """
     The main function to fetch account information using AccountClient.
 
@@ -64,7 +63,7 @@ def main(credentials_file, token_file, base_url):
     :param redirect_uri: Redirect URI for OAuth authorization.
     """
     # Create AccountClient instance
-    account_client = AccountClient(credentials_file, token_file)
+    account_client = AccountClient(credentials_file, grant_flow_type_filenames_file)
 
     # Get account information
     account_info = account_client.get_account_info(base_url)
@@ -74,20 +73,15 @@ def main(credentials_file, token_file, base_url):
 
 
 
+import datetime
+import time
+import json
+from oauth_utils import OAuthClient
+
 if __name__ == "__main__":
+    # Initialize OAuthClient with credentials and token files
     credentials_file = 'credentials.json'
-    token_file = 'authorization_code_token_data.json'
-    # token_file = 'client_credentials_token_data.json'
-
-    # Create OAuthClient instance
-    # oauth_client = OAuthClient(
-    #     credentials_file, token_file
-    # )
-
-    # oauth_client.authorization_code_grant_flow()
-    # print("Access token:", oauth_client.access_token)
-    # print("Refresh token:", oauth_client.refresh_token)
-
+    grant_flow_type_filenames_file = 'grant_flow_type_filenames.json'
 
     base_url = 'https://api.schwabapi.com/trader/v1'
-    main(credentials_file, token_file, base_url)
+    main(credentials_file, grant_flow_type_filenames_file, base_url)

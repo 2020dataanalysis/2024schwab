@@ -18,6 +18,7 @@ class OAuthClient:
         # print(self.AUTHORIZATION_CODE_GRANT_FILENAME)
         # print(self.REFRESH_TOKEN_GRANT_FILENAME)
         # self.load_access_token()
+        self.manage_tokens()
 
     def load_credentials(self):
         try:
@@ -88,10 +89,11 @@ class OAuthClient:
         self.access_token = token_response.get('access_token')
 
 
-    def refresh_token_grant_flow(self, token_file):
+    def refresh_token_grant_flow(self, token_file_key):
+        token_file = self.grant_flow_type_filenames[token_file_key]
         token_response = self.get_refresh_access_token()
         if token_response:
-            self.save_token(token_file, token_response)
+            self.save_token(token_file_key, token_response)
             self.access_token = token_response.get('access_token')
             self.refresh_token = token_response.get('refresh_token')
             print('Refresh Token Grant Flow --> Complete')
@@ -253,11 +255,12 @@ class OAuthClient:
         print("New token data saved successfully.")
 
 
-    def save_token(self, token_file, token_response):
+    def save_token(self, token_file_key, token_response):
+        token_file = self.grant_flow_type_filenames[token_file_key]
         # If Authorization Code Grant Flow then make copy for Refresh Token Grant Flow
         expiration_time = self.calculate_expiration_time(token_response['expires_in'])
         token_response['access_token_expiration_time'] = expiration_time
-        if 'refresh_token' in token_response:
+        if token_file_key == 'AUTHORIZATION_CODE_KEY':
             expiration_time = self.calculate_expiration_time( 60 * 60 * 24 * 7 )
             token_response['refresh_token_expiration_time'] = expiration_time
             with open(self.REFRESH_TOKEN_GRANT_FILENAME, 'w') as file:
@@ -269,7 +272,8 @@ class OAuthClient:
         print(f"New token data saved successful: {token_file}")
 
 
-    def is_token_valid(self, token_file, token):
+    def is_token_valid(self, token_file_key, token):
+        token_file = self.grant_flow_type_filenames[token_file_key]
         try:
             with open(token_file, 'r') as file:
                 token_data = json.load(file)
@@ -292,7 +296,8 @@ class OAuthClient:
             return False
 
 
-    def load_token_file(self, token_file):
+    def load_token_file(self, token_file_key):
+        token_file = self.grant_flow_type_filenames[token_file_key]
         try:
             # Load the tokens from the file
             with open(token_file, 'r') as file:
@@ -309,23 +314,24 @@ class OAuthClient:
 
     def manage_tokens(self):
         # Check if access token is valid with Refresh Flow
-        token_file = self.grant_flow_type_filenames[self.REFRESH_TOKEN_KEY]
+        token_file_key = self.REFRESH_TOKEN_KEY
+        token_file = self.grant_flow_type_filenames[token_file_key]
         print(f'token_file: {token_file}')
         import os
         if os.path.exists(token_file):
             print(f'File Exists: {token_file}')
-            if self.is_token_valid(token_file, 'access_token'):
+            if self.is_token_valid(token_file_key, 'access_token'):
                 print('load token file')
-                self.load_token_file(token_file)
+                self.load_token_file(token_file_key)
                 return
             else:
                 print('Perform Refresh Grant Flow')
-                if self.is_token_valid(token_file, 'refresh_token'):
+                if self.is_token_valid(token_file_key, 'refresh_token'):
                     print('Refresh Token is valid')
                     print('Perform Refresh Grant Flow')
                     print('load token file')               
-                    self.load_token_file(token_file)
-                    self.refresh_token_grant_flow(token_file)
+                    self.load_token_file(token_file_key)
+                    self.refresh_token_grant_flow(token_file_key)
                     return
                 else:
                     print('Perform Authorization Code Grant Flow')
