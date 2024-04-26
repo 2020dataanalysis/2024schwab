@@ -32,7 +32,6 @@ class OAuthClient:
             self.app_secret = None
 
 
-
     def load_grant_flow_type_filenames(self):
         try:
             # with open(self.grant_flow_type_filenames_file, 'r') as file:
@@ -47,27 +46,9 @@ class OAuthClient:
                 for flow_type, filename in self.grant_flow_type_filenames.items():
                     print(f"Grant Flow Type: {flow_type}, Filename: {filename}")
 
-
         except FileNotFoundError:
             print(f"Config file '{self.grant_flow_type_filenames_file}' not found.")
             self.grant_flow_type_filenames = {}
-
-
-
-
-    # def load_access_token(self):
-    #     try:
-    #         # Load the access token from the file
-    #         with open(self.token_file, 'r') as file:
-    #             access_token_data = json.load(file)
-    #         self.access_token = access_token_data['access_token']
-    #         self.refresh_token = None
-    #         if 'refresh_token' in access_token_data:
-    #             self.refresh_token = access_token_data['refresh_token']
-    #     except FileNotFoundError:
-    #         print(f'Access token file {self.token_file} not found.')
-    #         self.access_token = None
-    #         self.refresh_token = None
 
 
     def calculate_expiration_time(self, expires_in):
@@ -92,7 +73,6 @@ class OAuthClient:
         self.get_authorization_code()
         token_response = self.exchange_authorization_code_for_tokens()
         token_file = self.AUTHORIZATION_CODE_GRANT_FILENAME
-        print('92')
         print(token_file)
         self.save_token(token_file, token_response)
         self.access_token = token_response.get('access_token')
@@ -118,22 +98,9 @@ class OAuthClient:
             self.save_token(token_file, token_response)
             self.access_token = token_response.get('access_token')
             self.refresh_token = token_response.get('refresh_token')
+            print('Refresh Token Grant Flow --> Complete')
         else:
             print('Failed to Refresh Token Grant Flow')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     def get_refresh_access_token(self):
@@ -167,14 +134,6 @@ class OAuthClient:
         else:
             print("Failed to refresh access token. Error:", response.text)
             return None
-
-
-
-
-
-
-
-
 
 
     def get_authorization_code(self):
@@ -304,104 +263,36 @@ class OAuthClient:
 
 
     def save_token(self, token_file, token_response):
+        # If Authorization Code Grant Flow then make copy for Refresh Token Grant Flow
         expiration_time = self.calculate_expiration_time(token_response['expires_in'])
-        token_response['expiration_time'] = expiration_time
+        token_response['access_token_expiration_time'] = expiration_time
+        if 'refresh_token' in token_response:
+            expiration_time = self.calculate_expiration_time( 60 * 60 * 24 * 7 )
+            token_response['refresh_token_expiration_time'] = expiration_time
+            with open(self.REFRESH_TOKEN_GRANT_FILENAME, 'w') as file:
+                json.dump(token_response, file)
+            print(f"New token data saved successful: {self.REFRESH_TOKEN_GRANT_FILENAME}")
+
         with open(token_file, 'w') as file:
             json.dump(token_response, file)
-        print("New token data saved successful")
+        print(f"New token data saved successful: {token_file}")
 
 
 
-    # def authenticate_and_get_access_token(self):
-    #     print("Access token is not available or has expired.")
-    #     self.client_credentials_grant_flow()
-
-
-    # def is_token_valid(self):
-    #     try:
-    #         with open(self.token_file, 'r') as file:
-    #             access_token_data = json.load(file)
-
-    #         expiration_time = access_token_data.get('expiration_time')
-
-    #         if expiration_time:
-    #             current_time = int(time.time())
-    #             if current_time < expiration_time:
-    #                 print("Access token is still valid.")
-    #                 return True
-    #             else:
-    #                 print("Access token has expired.")
-    #                 return False
-    #         else:
-    #             print("Expiration time not found in access token data.")
-    #             return False
-    #     except FileNotFoundError:
-    #         print(f"File '{self.token_file}' not found.")
-    #         return False
-
-
-
-
-    def manage_tokens(self):
-        # Check if access token is valid with Refresh Flow
-        token_file = self.grant_flow_type_filenames['refresh_token_grant']
-        print(f'token_file: {token_file}')
-        import os
-        if os.path.exists(token_file):
-            print(f'File Exists: {token_file}')
-            if self.is_token_valid(token_file):
-                self.load_token_file(token_file)
-                return
-            else:
-                print('Perform Refresh Grant Flow')
-            # # Check if refresh token is available
-            # if check_refresh_token_validity(oauth_client):
-            #     # Perform token refresh
-            #     oauth_client.refresh_access_token()
-            #     return
-        else:
-            print(f'File does not Exist: {token_file}')
-            print('Perform Refresh Grant Flow')
-            token_file = self.grant_flow_type_filenames['authorization_code_grant']
-            print(f'token_file: {token_file}')
-
-            if os.path.exists(token_file):
-                print(f'370 File Exists: {token_file}')
-                if self.is_token_valid(token_file):
-                    print(f'token is valid: {token_file}')
-                    self.load_token_file(token_file)
-                    token_file = self.grant_flow_type_filenames['refresh_token_grant']
-                    self.refresh_token_grant_flow(token_file)
-                    return
-
-            else:
-                print('file does not exist')
-
-        # If no refresh token is available, perform authorization code grant flow
-        # oauth_client.authorization_code_grant_flow()
-
-
-
-
-
-
-
-
-
-    def is_token_valid(self, token_file):
+    def is_token_valid(self, token_file, token):
         try:
             with open(token_file, 'r') as file:
                 token_data = json.load(file)
-
-            expiration_time = token_data.get('expiration_time')
-
+            key = token +   '_expiration_time'
+            print(key)
+            expiration_time = token_data.get(key)
             if expiration_time:
                 current_time = int(time.time())
                 if current_time < expiration_time:
-                    print("Access token is still valid.")
+                    print(f"{token} is still valid.")
                     return True
                 else:
-                    print("Token has expired.")
+                    print(f"Token has expired: {token}")
                     return False
             else:
                 print("Expiration time not found in access token data.")
@@ -409,9 +300,6 @@ class OAuthClient:
         except FileNotFoundError:
             print(f"File '{token_file}' not found.")
             return False
-
-
-
 
 
     def load_token_file(self, token_file):
@@ -427,3 +315,49 @@ class OAuthClient:
             print(f'Access token file {token_file} not found.')
             self.access_token = None
             self.refresh_token = None
+
+
+
+
+
+
+    def manage_tokens(self):
+        # Check if access token is valid with Refresh Flow
+        token_file = self.grant_flow_type_filenames['refresh_token_grant']
+        print(f'token_file: {token_file}')
+        import os
+        if os.path.exists(token_file):
+            print(f'File Exists: {token_file}')
+            if self.is_token_valid(token_file, 'access_token'):
+                print('load token file')
+                self.load_token_file(token_file)
+                return
+            else:
+                print('Perform Refresh Grant Flow')
+                if self.is_token_valid(token_file, 'refresh_token'):
+                    print('Refresh Token is valid')
+                    print('Perform Refresh Grant Flow')
+                    print('load token file')               
+                    self.load_token_file(token_file)
+                    self.refresh_token_grant_flow(token_file)
+                    return
+                else:
+                    print('Perform Authorization Code Grant Flow')
+                    self.authorization_code_grant_flow()
+
+            # # Check if refresh token is available
+            # if check_refresh_token_validity(oauth_client):
+            #     # Perform token refresh
+            #     oauth_client.refresh_access_token()
+            #     return
+        else:
+            print(f'File does not Exist: {token_file}')
+            print('Perform Authorization Code Grant Flow')
+            self.authorization_code_grant_flow()
+            return
+
+            # else:
+            #     print('file does not exist')
+
+        # If no refresh token is available, perform authorization code grant flow
+        # oauth_client.authorization_code_grant_flow()
