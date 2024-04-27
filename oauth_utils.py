@@ -274,11 +274,12 @@ class OAuthClient:
         # If Authorization Code Grant Flow then make copy for Refresh Token Grant Flow
         expiration_time = self.calculate_expiration_time(token_response['expires_in'])
         token_response['access_token_expiration_time'] = expiration_time
-        if 'refresh_key' in token_response:
+        if 'refresh_token' in token_response:
             expiration_time = self.calculate_expiration_time( 60 * 60 * 24 * 7 )
             token_response['refresh_token_expiration_time'] = expiration_time
 
-        if token_file_key == 'AUTHORIZATION_CODE_KEY':
+        # if token_file_key == 'AUTHORIZATION_CODE_KEY':
+        if token_file_key == self.AUTHORIZATION_CODE_KEY:
             print("278 equal keys")
             with open(self.REFRESH_TOKEN_GRANT_FILENAME, 'w') as file:
                 json.dump(token_response, file)

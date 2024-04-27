@@ -29,30 +29,32 @@ class AccountClient:
         :return: Account information JSON if successful, None otherwise.
         """
 
-        if self.oauth_client.access_token:
-            headers = {
-                'Authorization': f'Bearer {self.oauth_client.access_token}',
-                'Accept': 'application/json'
+        endpoint = f"/accounts/accountNumbers"
+        response = self.get_request(base_url, endpoint)
+        return response
+
+
+    def get_request(self, base_url, endpoint):
+        """
+        Retrieves account information for the specified account number.
+
+        :param account_number: The account number for which to retrieve information.
+        :return: Account information JSON if successful, None otherwise.
+        """
+
+        headers = {
+            'Authorization': f'Bearer {self.oauth_client.access_token}',
+            'Accept': 'application/json'
             }
+        endpoint = f"{base_url}/accounts"
+        response = requests.get(endpoint, headers=headers)
 
-            endpoint = f"{base_url}/accounts/accountNumbers"
-            response = requests.get(endpoint, headers=headers)
-            print(endpoint)
-            print(response)
-            if response.status_code == 200:
-                return response.json()
-            else:
-                print("Failed to get account information. Error:", response.text)
-                return None
+        print(response)
+        if response.status_code == 200:
+            return response.json()
         else:
-            print("Error: Failed to obtain access token.")
+            print("Failed to get account information. Error:", response.text)
             return None
-
-
-
-
-
-
 
 
     def get_account(self, base_url):
@@ -105,9 +107,9 @@ def main(credentials_file, grant_flow_type_filenames_file, base_url):
         print("Account information:", account_info)
 
 
-    account = account_client.get_account(base_url)
-    if account:
-        print("Account information:", account)
+    # account = account_client.get_account(base_url)
+    # if account:
+    #     print("Account information:", account)
 
 
 import datetime
