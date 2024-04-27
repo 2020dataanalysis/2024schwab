@@ -1,3 +1,17 @@
+"""
+Explanation:
+    1. The authorization server redirects the user to the login page and obtains their consent for accessing the requested resources.
+    2. The user logs in and grants access to the OAuth client.
+    3. The authorization server generates an authorization code and returns it to the OAuth client.
+    4. The OAuth client exchanges the authorization code for access and refresh tokens by making a request to the token endpoint.
+    5. Upon receiving the tokens, the OAuth client saves them in .json files (e.g., access_token.json, refresh_token.json) for future use.
+
+This explanation simplifies the OAuth 2.0 authorization flow and focuses on the steps related to token retrieval and saving them in .json files.
+"""
+
+
+
+
 import json
 import requests
 import base64
@@ -69,9 +83,9 @@ class OAuthClient:
 
         self.get_authorization_code()
         token_response = self.exchange_authorization_code_for_tokens()
-        token_file = self.AUTHORIZATION_CODE_GRANT_FILENAME
-        print(token_file)
-        self.save_token(token_file, token_response)
+        # token_file = self.AUTHORIZATION_CODE_GRANT_FILENAME
+        # print(token_file)
+        self.save_token(self.AUTHORIZATION_CODE_KEY, token_response)
         self.access_token = token_response.get('access_token')
         self.refresh_token = token_response.get('refresh_token')
 
@@ -260,9 +274,12 @@ class OAuthClient:
         # If Authorization Code Grant Flow then make copy for Refresh Token Grant Flow
         expiration_time = self.calculate_expiration_time(token_response['expires_in'])
         token_response['access_token_expiration_time'] = expiration_time
-        if token_file_key == 'AUTHORIZATION_CODE_KEY':
+        if 'refresh_key' in token_response:
             expiration_time = self.calculate_expiration_time( 60 * 60 * 24 * 7 )
             token_response['refresh_token_expiration_time'] = expiration_time
+
+        if token_file_key == 'AUTHORIZATION_CODE_KEY':
+            print("278 equal keys")
             with open(self.REFRESH_TOKEN_GRANT_FILENAME, 'w') as file:
                 json.dump(token_response, file)
             print(f"New token data saved successful: {self.REFRESH_TOKEN_GRANT_FILENAME}")

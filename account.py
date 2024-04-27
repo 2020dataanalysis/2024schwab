@@ -19,9 +19,6 @@ class AccountClient:
         """
         self.oauth_client = OAuthClient(credentials_file, grant_flow_type_filenames_file)
 
-        # Manage tokens to ensure continuous access
-        # manage_tokens(oauth_client)
-        # self.oauth_client.manage_tokens()
 
 
     def get_account_info(self, base_url):
@@ -52,6 +49,42 @@ class AccountClient:
             return None
 
 
+
+
+
+
+
+
+    def get_account(self, base_url):
+        """
+        Retrieves account information for the specified account number.
+
+        :param account_number: The account number for which to retrieve information.
+        :return: Account information JSON if successful, None otherwise.
+        """
+
+        if self.oauth_client.access_token:
+            headers = {
+                'Authorization': f'Bearer {self.oauth_client.access_token}',
+                'Accept': 'application/json'
+            }
+
+            endpoint = f"{base_url}/accounts"
+            response = requests.get(endpoint, headers=headers)
+            print(endpoint)
+            print(response)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                print("Failed to get account information. Error:", response.text)
+                return None
+        else:
+            print("Error: Failed to obtain access token.")
+            return None
+
+
+
+
 def main(credentials_file, grant_flow_type_filenames_file, base_url):
     """
     The main function to fetch account information using AccountClient.
@@ -71,6 +104,10 @@ def main(credentials_file, grant_flow_type_filenames_file, base_url):
     if account_info:
         print("Account information:", account_info)
 
+
+    account = account_client.get_account(base_url)
+    if account:
+        print("Account information:", account)
 
 
 import datetime
