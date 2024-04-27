@@ -278,9 +278,7 @@ class OAuthClient:
             expiration_time = self.calculate_expiration_time( 60 * 60 * 24 * 7 )
             token_response['refresh_token_expiration_time'] = expiration_time
 
-        # if token_file_key == 'AUTHORIZATION_CODE_KEY':
         if token_file_key == self.AUTHORIZATION_CODE_KEY:
-            print("278 equal keys")
             with open(self.REFRESH_TOKEN_GRANT_FILENAME, 'w') as file:
                 json.dump(token_response, file)
             print(f"New token data saved successful: {self.REFRESH_TOKEN_GRANT_FILENAME}")
