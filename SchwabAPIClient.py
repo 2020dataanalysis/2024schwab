@@ -18,6 +18,12 @@ class SchwabAPIClient:
         self.base_url = base_url
         self.oauth_client = OAuthClient(credentials_file, grant_flow_type_filenames_file)
 
+
+    def set_base_url(self, base_url):
+        self.base_url = base_url
+
+
+
     def save_to_file(self, endpoint, response):
         """
         Saves API response to a JSON file.
@@ -115,14 +121,57 @@ class SchwabAPIClient:
             print(f"Failed to delete data from {endpoint}. Error: {response.text}")
             return False
 
-    def get_all_orders(self):
+
+
+
+
+    def get_account_info(self):
+        """
+        Retrieves account information for the specified account number.
+
+        :param account_number: The account number for which to retrieve information.
+        :return: Account information JSON if successful, None otherwise.
+        """
+
+        endpoint = '/accounts/accountNumbers'
+        response = self.get_request(endpoint)
+        self.save_to_file(endpoint, response)
+        return response
+
+
+
+
+
+
+
+    def get_all_orders(self, days):
         """
         Retrieves all orders for all accounts.
 
         :return: Orders JSON if successful, None otherwise.
         """
         endpoint = '/orders'
-        response = self.get_request(endpoint)
+
+
+
+        from datetime import datetime, timedelta
+
+        # Calculate the start time (60 days before today)
+        start_time = datetime.now() - timedelta(days=days)
+
+        # Format the start time in ISO-8601 format
+        start_time_str = start_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+
+        # Define the URL for your API endpoint
+        url = "https://your-api-endpoint.com/orders"
+
+        # Define the query parameters
+        params = {
+            "fromEnteredTime": start_time_str,
+            "toEnteredTime": "2024-04-27T23:59:59.999Z"  # Assuming today's date as end time
+        }
+
+        response = self.get_request(endpoint, params)
         if response:
             self.save_to_file(endpoint, response)
         return response
