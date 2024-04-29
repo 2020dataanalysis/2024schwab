@@ -1,13 +1,16 @@
 import json
 import requests
+from pathlib import Path
 from oauth_utils import OAuthClient
 
 class SchwabAPIClient:
     """
     A class to interact with the Schwab API to retrieve account information and orders.
     """
+    ACCOUNT_ACCESS_URL_KEY = 'ACCOUNT_ACCESS'
+    MARKET_DATA_KEY = 'MARKET_DATA_PRODUCTION'
 
-    def __init__(self, credentials_file, grant_flow_type_filenames_file, base_url):
+    def __init__(self, credentials_file, grant_flow_type_filenames_file, config_file='config.json'):
         """
         Initializes the SchwabAPIClient with OAuth credentials and base URL.
 
@@ -15,13 +18,44 @@ class SchwabAPIClient:
         :param grant_flow_type_filenames_file: Path to the grant flow type filenames file.
         :param base_url: Base URL for the Schwab API.
         """
-        self.base_url = base_url
+
         self.oauth_client = OAuthClient(credentials_file, grant_flow_type_filenames_file)
 
+        # Load configuration from either custom or default config file
+        config_path = Path('config') / config_file
+        self.config = self._load_config(config_path)
+
+        # Extract base URLs from configuration
+        self.base_urls = self.config.get('BASE_URLS', {})
+        print(self.base_urls)
+        self.base_url = self.base_urls[self.ACCOUNT_ACCESS_URL_KEY]
+        print(f'base_url: {self.base_url}')
+
+    def _load_config(self, config_file):
+        try:
+            # config_path = os.path.join('config', config_file)
+            with open(config_file, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print(f"Warning: Config file '{config_file}' not found. Using default config.")
+            # Load default config
+            with open('config.json', 'r') as f:
+                return json.load(f)
 
     def set_base_url(self, base_url):
         self.base_url = base_url
 
+    def load_config_file(self):
+        try:
+            with open(self.grant_flow_type_filenames_file, 'r') as file:
+                self.grant_flow_type_filenames = json.load(file)
+                # print("Grant Flow Types and Filenames:")
+                # for flow_type, filename in self.grant_flow_type_filenames.items():
+                #     print(f"Grant Flow Type: {flow_type}, Filename: {filename}")
+
+        except FileNotFoundError:
+            print(f"Config file '{self.grant_flow_type_filenames_file}' not found.")
+            self.grant_flow_type_filenames = {}
 
 
     def save_to_file(self, endpoint, response):
@@ -141,9 +175,6 @@ class SchwabAPIClient:
 
 
 
-
-
-
     def get_all_orders(self, days):
         """
         Retrieves all orders for all accounts.
@@ -152,26 +183,49 @@ class SchwabAPIClient:
         """
         endpoint = '/orders'
 
+        from datetime import datetime, timedelta, timezone
 
+        # Define the Pacific Time Zone (PT) offset from UTC (California is typically 7 hours behind UTC)
+        # pt_offset = -7  # Pacific Daylight Time (PDT) offset from UTC
+       
+        # Get current UTC time
+        current_utc_time = datetime.utcnow()
 
-        from datetime import datetime, timedelta
+        # Calculate the offset for Pacific Time Zone (PT)
+        # pt_time = current_utc_time + timedelta(hours=pt_offset)
 
+        # Format the current time as a string in the required format
+        # to_time_str = pt_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+        to_time_str = current_utc_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+
+        # days = 1
         # Calculate the start time (60 days before today)
-        start_time = datetime.now() - timedelta(days=days)
+        # start_time = datetime.now() - timedelta(days=days)
+
+        minutes = 30
+        # start_time = datetime.now() - timedelta(minutes=minutes)
+        start_time = current_utc_time - timedelta(minutes=minutes)
 
         # Format the start time in ISO-8601 format
         start_time_str = start_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 
-        # Define the URL for your API endpoint
-        url = "https://your-api-endpoint.com/orders"
+        # Available values : AWAITING_PARENT_ORDER, AWAITING_CONDITION, AWAITING_STOP_CONDITION, AWAITING_MANUAL_REVIEW, ACCEPTED, AWAITING_UR_OUT, PENDING_ACTIVATION, QUEUED, WORKING, REJECTED, PENDING_CANCEL, CANCELED, PENDING_REPLACE, REPLACED, FILLED, EXPIRED, NEW, AWAITING_RELEASE_TIME, PENDING_ACKNOWLEDGEMENT, PENDING_RECALL, UNKNOWN
 
-        # Define the query parameters
+        # # Update the params dictionary
+        # params = {
+        #     "fromEnteredTime": start_time_str,
+        #     "toEnteredTime": to_time_str,
+        #     "status": "WORKING"
+        # }
+
         params = {
             "fromEnteredTime": start_time_str,
-            "toEnteredTime": "2024-04-27T23:59:59.999Z"  # Assuming today's date as end time
+            "toEnteredTime": to_time_str
         }
 
+
         response = self.get_request(endpoint, params)
+        #   Code to filter out times
         if response:
             self.save_to_file(endpoint, response)
         return response
@@ -213,6 +267,7 @@ class SchwabAPIClient:
         """
         endpoint = f'/accounts/{account_number}/orders'
         response = self.post_request(endpoint, data=order_data)
+        print(response)
         if response:
             self.save_to_file(endpoint, response)
         return response

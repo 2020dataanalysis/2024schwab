@@ -16,6 +16,7 @@ import json
 import requests
 import base64
 import time
+from pathlib import Path
 from urllib.parse import unquote
 
 class OAuthClient:
@@ -51,7 +52,8 @@ class OAuthClient:
 
     def load_grant_flow_type_filenames(self):
         try:
-            with open(self.grant_flow_type_filenames_file, 'r') as file:
+            file_path = Path('config') / self.grant_flow_type_filenames_file
+            with open(file_path, 'r') as file:
                 self.grant_flow_type_filenames = json.load(file)
                 # print("Grant Flow Types and Filenames:")
                 # for flow_type, filename in self.grant_flow_type_filenames.items():
@@ -271,6 +273,7 @@ class OAuthClient:
 
     def save_token(self, token_file_key, token_response):
         token_file = self.grant_flow_type_filenames[token_file_key]
+        token_file_path = Path('config') / token_file
         # If Authorization Code Grant Flow then make copy for Refresh Token Grant Flow
         expiration_time = self.calculate_expiration_time(token_response['expires_in'])
         token_response['access_token_expiration_time'] = expiration_time
@@ -279,11 +282,11 @@ class OAuthClient:
             token_response['refresh_token_expiration_time'] = expiration_time
 
         if token_file_key == self.AUTHORIZATION_CODE_KEY:
-            with open(self.REFRESH_TOKEN_GRANT_FILENAME, 'w') as file:
+            with open(Path('config') / self.REFRESH_TOKEN_GRANT_FILENAME, 'w') as file:
                 json.dump(token_response, file)
             print(f"New token data saved successful: {self.REFRESH_TOKEN_GRANT_FILENAME}")
 
-        with open(token_file, 'w') as file:
+        with open(Path('config') / token_file, 'w') as file:
             json.dump(token_response, file)
         print(f"New token data saved successful: {token_file}")
 
@@ -291,7 +294,7 @@ class OAuthClient:
     def is_token_valid(self, token_file_key, token):
         token_file = self.grant_flow_type_filenames[token_file_key]
         try:
-            with open(token_file, 'r') as file:
+            with open(Path('config') / token_file, 'r') as file:
                 token_data = json.load(file)
             key = token +   '_expiration_time'
             print(key)
@@ -314,9 +317,10 @@ class OAuthClient:
 
     def load_token_file(self, token_file_key):
         token_file = self.grant_flow_type_filenames[token_file_key]
+        token_file_path = Path('config') / token_file
         try:
             # Load the tokens from the file
-            with open(token_file, 'r') as file:
+            with open(token_file_path, 'r') as file:
                 token_data = json.load(file)
             self.access_token = token_data['access_token']
             self.refresh_token = None
@@ -334,7 +338,7 @@ class OAuthClient:
         token_file = self.grant_flow_type_filenames[token_file_key]
         print(f'token_file: {token_file}')
         import os
-        if os.path.exists(token_file):
+        if os.path.exists(Path('config') / token_file):
             print(f'File Exists: {token_file}')
             if self.is_token_valid(token_file_key, 'access_token'):
                 print('load token file')

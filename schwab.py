@@ -7,23 +7,9 @@ if __name__ == "__main__":
     grant_flow_type_filenames_file = 'grant_flow_type_filenames.json'
     base_url = 'https://api.schwabapi.com/trader/v1'
 
-    client = SchwabAPIClient(credentials_file, grant_flow_type_filenames_file, base_url)
+    client = SchwabAPIClient(credentials_file, grant_flow_type_filenames_file)
 
-
-
-    #   Working
-    # # Retrieve all orders for all accounts
-    # days = 1
-    # all_orders = client.get_all_orders(days)
-    # if all_orders:
-    #     print("All Orders:", all_orders)
-
-
-
-
-
-    # client.set_base_url(base_url)
-
+    print('\nAccount Information:')
     # Get account information
     account_info = client.get_account_info()
     client.hashValue = account_info[0]['hashValue']
@@ -31,8 +17,23 @@ if __name__ == "__main__":
     if account_info:
         print("Account information:", account_info)
 
-
     print(f'client hashValue: {client.hashValue}')
+
+
+
+
+
+
+
+    #   Working
+    # Retrieve all orders for all accounts
+    print('\nGet All Orders')
+    days = 1
+    all_orders = client.get_all_orders(days)
+    if all_orders:
+        print("All Orders:", all_orders)
+
+
 
 
 
@@ -54,10 +55,18 @@ if __name__ == "__main__":
 
     # Place an order for a specific account
     account_number = client.hashValue
-    order_data = {"orderType": "LIMIT", "session": "SEAMLESS", "duration": "DAY", "orderStrategyType": "SINGLE", "price": '10.00', "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": {"symbol": "INTC", "assetType": "EQUITY"}}]}  # Fill in order data
-    placed_order = client.place_order(account_number, order_data)
-    if placed_order:
-        print("Placed Order:", placed_order)
+    # print(f'account_number: {account_number}')
+    # order_data = {"orderType": "LIMIT", "session": "NORMAL", "duration": "DAY", "orderStrategyType": "SINGLE", "price": 10.00, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": {"symbol": "INTC", "assetType": "EQUITY"}}]}  # Fill in order data
+    # order_data =   {"orderType": "LIMIT",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": 500.00, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
+    order_data =   {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": 450.00, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
+
+    # placed_order = client.place_order(account_number, order_data)
+    # if placed_order:
+    #     print("Placed Order:", placed_order)
+
+
+
+
 
     # # Preview an order for a specific account (if available)
     # previewed_order = client.preview_order(account_number, order_data)
