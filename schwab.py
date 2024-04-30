@@ -19,12 +19,6 @@ if __name__ == "__main__":
 
     print(f'client hashValue: {client.hashValue}')
 
-
-
-
-
-
-
     #   Working
     # Retrieve all orders for all accounts
     print('\nGet All Orders')
@@ -32,11 +26,6 @@ if __name__ == "__main__":
     all_orders = client.get_all_orders(days)
     if all_orders:
         print("All Orders:", all_orders)
-
-
-
-
-
 
 
 
@@ -58,15 +47,8 @@ if __name__ == "__main__":
     # print(f'account_number: {account_number}')
     # order_data = {"orderType": "LIMIT", "session": "NORMAL", "duration": "DAY", "orderStrategyType": "SINGLE", "price": 10.00, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": {"symbol": "INTC", "assetType": "EQUITY"}}]}  # Fill in order data
     # order_data =   {"orderType": "LIMIT",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": 500.00, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
-    order_data =   {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": 450.00, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
-
-    # placed_order = client.place_order(account_number, order_data)
-    # if placed_order:
-    #     print("Placed Order:", placed_order)
-
-
-
-
+    # order_data =   {"orderType": "LIMIT",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": 500.00, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
+    order_data =   {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": 509.80, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
 
     # # Preview an order for a specific account (if available)
     # previewed_order = client.preview_order(account_number, order_data)

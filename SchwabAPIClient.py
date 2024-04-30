@@ -197,7 +197,7 @@ class SchwabAPIClient:
         now_utc = datetime.now(timezone.utc)
 
         # Calculate the start time (30 minutes before current UTC time)
-        start_time = now_utc - timedelta(minutes=170)
+        start_time = now_utc - timedelta(minutes=10)
 
         # Format the start time and current time as strings in ISO-8601 format with milliseconds and 'Z' for UTC timezone
         start_time_str = start_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
