@@ -1,5 +1,6 @@
 import json
 import requests
+import logging
 from pathlib import Path
 from oauth_utils import OAuthClient
 
@@ -183,7 +184,7 @@ class SchwabAPIClient:
 
 
 
-    def get_all_orders(self, days):
+    def get_all_orders(self, days, hours, minutes):
         """
         Retrieves all orders for all accounts.
 
@@ -197,7 +198,10 @@ class SchwabAPIClient:
         now_utc = datetime.now(timezone.utc)
 
         # Calculate the start time (30 minutes before current UTC time)
-        start_time = now_utc - timedelta(minutes=10)
+        # start_time = now_utc - timedelta(minutes=10)
+        start_time = now_utc - timedelta(days=days, hours=hours, minutes=minutes)
+        end_time = now_utc
+
 
         # Format the start time and current time as strings in ISO-8601 format with milliseconds and 'Z' for UTC timezone
         start_time_str = start_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
@@ -346,3 +350,66 @@ class SchwabAPIClient:
         """
         endpoint = f'/accounts/{account_number}/orders/{order_id}'
         return self.delete_request(endpoint)
+
+
+
+
+    def read_orders_from_file(self, file_path):
+        """
+        Reads orders from a JSON file.
+
+        :param file_path: Path to the JSON file containing orders.
+        :return: List of orders if successful, None otherwise.
+        """
+        try:
+            with open(file_path, 'r') as file:
+                orders = json.load(file)
+            return orders
+        except FileNotFoundError:
+            print("File not found:", file_path)
+            return None
+        except Exception as e:
+            print("Error reading orders from file:", e)
+            return None
+
+    # def process_orders_from_file(self, file_path):
+    #     """
+    #     Process orders read from a JSON file and return a list of orderId's.
+
+    #     :param file_path: Path to the JSON file containing orders.
+    #     :return: List of orderId's if successful, None otherwise.
+    #     """
+    #     # Read orders from file
+    #     orders = self.read_orders_from_file(file_path)
+
+    #     # Check if orders were successfully read
+    #     if orders is not None:
+    #         # Extract orderId's from orders
+    #         order_ids = [order.get("orderId") for order in orders]
+    #         return order_ids
+    #     else:
+    #         # Handle case where reading orders failed
+    #         print("Failed to read orders from file. Check the logs for details.")
+    #         return None
+
+
+
+    def process_orders_from_file(self, file_path):
+        """
+        Process orders read from a JSON file and return a list of orderId's with status 'PENDING_ACTIVATION'.
+
+        :param file_path: Path to the JSON file containing orders.
+        :return: List of orderId's with status 'PENDING_ACTIVATION' if successful, None otherwise.
+        """
+        # Read orders from file
+        orders = self.read_orders_from_file(file_path)
+
+        # Check if orders were successfully read
+        if orders is not None:
+            # Extract orderId's with status 'PENDING_ACTIVATION' from orders
+            pending_activation_order_ids = [order["orderId"] for order in orders if order.get("status") == "PENDING_ACTIVATION"]
+            return pending_activation_order_ids
+        else:
+            # Handle case where reading orders failed
+            print("Failed to read orders from file. Check the logs for details.")
+            return None

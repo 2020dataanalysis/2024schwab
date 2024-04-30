@@ -20,11 +20,17 @@ if __name__ == "__main__":
     print(f'client hashValue: {client.hashValue}')
 
 
-    # Retrieve all orders for all accounts
-    print('\nGet All Orders')
-    days = 0
-    hours = 4
-    minutes = 0
-    all_orders = client.get_all_orders(days, hours, minutes)
-    if all_orders:
-        print("All Orders:", all_orders)
+    file_path = "_orders.json"
+    
+    print('********************')
+    order_ids = client.process_orders_from_file(file_path)
+
+    print(order_ids)  # Output: List of orderId's from the orders file
+
+
+    # Cancel an existing order for a specific account
+    account_number = client.hashValue
+    for order_id in order_ids:
+        cancellation_result = client.cancel_order(account_number, order_id)
+        if cancellation_result:
+            print("Order Cancellation Successful")

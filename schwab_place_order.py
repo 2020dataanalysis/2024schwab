@@ -26,15 +26,18 @@ if __name__ == "__main__":
 
 
     #   MARKET ORDER
-    order_data =   {"orderType": "MARKET",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
+    # order_data =   {"orderType": "MARKET",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "orderLegCollection": [{"instruction": "BUY", "quantity": 100, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
 
     #   LIMIT ORDER
     session = session_time['NORMAL']
     # order_data = {"orderType": "LIMIT", "session": "NORMAL", "duration": "DAY", "orderStrategyType": "SINGLE", "price": 10.00, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": {"symbol": "INTC", "assetType": "EQUITY"}}]}  # Fill in order data
-    # order_data = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": 509.80, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
+    # order_data = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": 503.80, "orderLegCollection": [{"instruction": "BUY", "quantity": 100, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
+    order_data = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": 503.10, "orderLegCollection": [{"instruction": "SELL", "quantity": 100, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
 
     #   STOP ORDER
     # order_data = {"orderType": "STOP",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "stopPrice": 509.50, "orderLegCollection": [{"instruction": "SELL", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
+    
+    
     placed_order = client.place_order(account_number, order_data)
     if placed_order:
         print("Placed Order:", placed_order)

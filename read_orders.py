@@ -20,11 +20,6 @@ if __name__ == "__main__":
     print(f'client hashValue: {client.hashValue}')
 
 
-    # Retrieve all orders for all accounts
-    print('\nGet All Orders')
-    days = 0
-    hours = 4
-    minutes = 0
-    all_orders = client.get_all_orders(days, hours, minutes)
-    if all_orders:
-        print("All Orders:", all_orders)
+    file_path = "path/to/orders.json"
+    order_ids = client.process_orders_from_file(file_path)
+    print(order_ids)  # Output: List of orderId's from the orders file
