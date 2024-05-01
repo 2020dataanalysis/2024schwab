@@ -4,7 +4,7 @@ import json
 import requests
 import logging
 from pathlib import Path
-from oauth_utils import OAuthClient
+from OauthClient import OAuthClient
 
 class SchwabAPIClient:
     """

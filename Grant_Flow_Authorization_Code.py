@@ -13,7 +13,7 @@ The flow involves the following steps:
 
 
 import json
-from oauth_utils import OAuthClient
+from OauthClient import OAuthClient
 
 if __name__ == "__main__":
     credentials_file = 'credentials.json'

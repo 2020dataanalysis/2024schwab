@@ -1,5 +1,5 @@
 import json
-from oauth_utils import OAuthClient
+from OauthClient import OAuthClient
 import requests
 
 

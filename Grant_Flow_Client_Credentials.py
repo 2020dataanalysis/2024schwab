@@ -5,7 +5,7 @@ This script implements the Client Credentials Code Grant Flow for obtaining OAut
 
 """
 import json
-from oauth_utils import OAuthClient
+from OauthClient import OAuthClient
 
 # Main function to perform OAuth client credentials grant flow
 if __name__ == "__main__":

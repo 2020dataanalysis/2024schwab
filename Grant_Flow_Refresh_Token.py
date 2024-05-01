@@ -1,7 +1,7 @@
 import datetime
 import time
 import json
-from oauth_utils import OAuthClient
+from OauthClient import OAuthClient
 
 if __name__ == "__main__":
     # Initialize OAuthClient with credentials and token files
