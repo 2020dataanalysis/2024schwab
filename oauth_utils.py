@@ -1,3 +1,5 @@
+#   oauth_utils.py
+
 """
 Explanation:
     1. The authorization server redirects the user to the login page and obtains their consent for accessing the requested resources.
