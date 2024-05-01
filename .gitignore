@@ -1,7 +1,7 @@
 *.DS_Store
 env
 __pycache__
-access_token.json
-refresh_token.json
+*token*.json
 credentials.json
-*.json
+private
+output

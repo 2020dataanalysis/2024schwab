@@ -1,0 +1,6 @@
+{
+    "AUTHORIZATION_CODE": "authorization_code_token.json",
+    "CLIENT_CREDENTIALS": "client_credentials_token.json",
+    "REFRESH_TOKEN": "refresh_token.json"
+  }
+  

@@ -23,7 +23,7 @@ if __name__ == "__main__":
     # Retrieve all orders for all accounts
     print('\nGet All Orders')
     days = 0
-    hours = 1
+    hours = 6
     minutes = 0
     all_orders = client.get_all_orders(days, hours, minutes)
     if all_orders:
