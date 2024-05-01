@@ -140,7 +140,7 @@ def main(credentials_file, grant_flow_type_filenames_file, base_url):
 import datetime
 import time
 import json
-from oauth_utils import OAuthClient
+from OauthClient import OAuthClient
 
 if __name__ == "__main__":
     # Initialize OAuthClient with credentials and token files
