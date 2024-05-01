@@ -25,7 +25,8 @@ class SchwabAPIClient:
         # Load configuration from either custom or default config file
         config_path = Path('config') / config_file
         self.config = self._load_config(config_path)
-
+        print(f'config: {self.config}')
+        print(self.config.keys())
         # Extract base URLs from configuration
         self.base_urls = self.config.get('BASE_URLS', {})
         print(self.base_urls)
@@ -67,9 +68,12 @@ class SchwabAPIClient:
         :param response: API response data.
         """
         file_name = f'{endpoint.replace("/", "_")}.json'
-        with open(file_name, 'w') as file:
+        file_path = Path(self.config['output_path']) / file_name
+        # Create the directory if it does not exist
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(file_path, 'w') as file:
             json.dump(response, file)
-        print(f"Data saved successfully: {file_name}")
+        print(f"Data saved successfully: {file_path}")
 
     def get_request(self, endpoint, params=None):
         """

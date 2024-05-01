@@ -23,8 +23,9 @@ if __name__ == "__main__":
     # Retrieve all orders for all accounts
     print('\nGet All Orders')
     days = 0
-    hours = 4
+    hours = 1
     minutes = 0
     all_orders = client.get_all_orders(days, hours, minutes)
     if all_orders:
         print("All Orders:", all_orders)
+    # print(client.config['output_path'])
