@@ -23,7 +23,8 @@ class OAuthClient:
     AUTHORIZATION_CODE_KEY = 'AUTHORIZATION_CODE'
     REFRESH_TOKEN_KEY = 'REFRESH_TOKEN'
 
-    def __init__(self, credentials_file, grant_flow_type_filenames_file):
+    def __init__(self, credentials_path, credentials_file, grant_flow_type_filenames_file):
+        self.credentials_path = credentials_path
         self.credentials_file = credentials_file
         self.grant_flow_type_filenames_file = grant_flow_type_filenames_file
         self.load_credentials()
@@ -36,8 +37,11 @@ class OAuthClient:
         self.manage_tokens()
 
     def load_credentials(self):
+        # path = Path(path) / self.credentials_file
+        # self.config = self._load_config(path)
+
         try:
-            with open(self.credentials_file, 'r') as file:
+            with open(Path(self.credentials_path) / self.credentials_file, 'r') as file:
                 credentials = json.load(file)
                 self.app_key = credentials.get('app_key')
                 self.app_secret = credentials.get('app_secret')
@@ -266,14 +270,14 @@ class OAuthClient:
     def save_access_token(self, access_token_response):
         expiration_time = self.calculate_expiration_time(access_token_response['expires_in'])
         access_token_response['expiration_time'] = expiration_time
-        with open(self.token_file, 'w') as file:
+        with open(Path(self.credentials_path) / self.token_file, 'w') as file:
             json.dump(access_token_response, file)
         print("New token data saved successfully.")
 
 
     def save_token(self, token_file_key, token_response):
         token_file = self.grant_flow_type_filenames[token_file_key]
-        token_file_path = Path('config') / token_file
+        token_file_path = Path(self.credentials_path) / token_file
         # If Authorization Code Grant Flow then make copy for Refresh Token Grant Flow
         expiration_time = self.calculate_expiration_time(token_response['expires_in'])
         token_response['access_token_expiration_time'] = expiration_time
@@ -282,11 +286,11 @@ class OAuthClient:
             token_response['refresh_token_expiration_time'] = expiration_time
 
         if token_file_key == self.AUTHORIZATION_CODE_KEY:
-            with open(Path('config') / self.REFRESH_TOKEN_GRANT_FILENAME, 'w') as file:
+            with open(Path(self.credentials_path) / self.REFRESH_TOKEN_GRANT_FILENAME, 'w') as file:
                 json.dump(token_response, file)
             print(f"New token data saved successful: {self.REFRESH_TOKEN_GRANT_FILENAME}")
 
-        with open(Path('config') / token_file, 'w') as file:
+        with open(Path(self.credentials_path) / token_file, 'w') as file:
             json.dump(token_response, file)
         print(f"New token data saved successful: {token_file}")
 
@@ -294,7 +298,7 @@ class OAuthClient:
     def is_token_valid(self, token_file_key, token):
         token_file = self.grant_flow_type_filenames[token_file_key]
         try:
-            with open(Path('config') / token_file, 'r') as file:
+            with open(Path(self.credentials_path) / token_file, 'r') as file:
                 token_data = json.load(file)
             key = token +   '_expiration_time'
             print(key)
@@ -317,7 +321,7 @@ class OAuthClient:
 
     def load_token_file(self, token_file_key):
         token_file = self.grant_flow_type_filenames[token_file_key]
-        token_file_path = Path('config') / token_file
+        token_file_path = Path(self.credentials_path) / token_file
         try:
             # Load the tokens from the file
             with open(token_file_path, 'r') as file:
@@ -338,7 +342,7 @@ class OAuthClient:
         token_file = self.grant_flow_type_filenames[token_file_key]
         print(f'token_file: {token_file}')
         import os
-        if os.path.exists(Path('config') / token_file):
+        if os.path.exists(Path(self.credentials_path) / token_file):
             print(f'File Exists: {token_file}')
             if self.is_token_valid(token_file_key, 'access_token'):
                 print('load token file')

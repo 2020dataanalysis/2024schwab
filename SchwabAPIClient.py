@@ -20,7 +20,7 @@ class SchwabAPIClient:
         :param base_url: Base URL for the Schwab API.
         """
 
-        self.oauth_client = OAuthClient(credentials_file, grant_flow_type_filenames_file)
+        # self.oauth_client = OAuthClient(credentials_file, grant_flow_type_filenames_file)
 
         # Load configuration from either custom or default config file
         config_path = Path('config') / config_file
@@ -32,6 +32,8 @@ class SchwabAPIClient:
         print(self.base_urls)
         self.base_url = self.base_urls[self.ACCOUNT_ACCESS_URL_KEY]
         print(f'base_url: {self.base_url}')
+
+        self.oauth_client = OAuthClient(self.config['private'], credentials_file, grant_flow_type_filenames_file)
 
     def _load_config(self, config_file):
         try:
