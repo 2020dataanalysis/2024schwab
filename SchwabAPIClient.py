@@ -444,6 +444,20 @@ class SchwabAPIClient:
         return response
 
 
+    def cancel_all_orders(self, days, hours, minutes, status = None):
+        if status not in ['WORKING', 'PENDING_ACTIVATION']:
+            print('Status needs to be either WORKING OR PENDING_ACTIVATION')
+            return
+        
+        orders = self.get_all_orders(days, hours, minutes, status)        
+        order_ids = self.get_IDs(orders)
+        account_number = self.hashValue
+        for order_id in order_ids:
+            cancellation_result = self.cancel_order(account_number, order_id)
+            if cancellation_result:
+                print(f"Order Cancellation Successful: {cancellation_result}")
+
+
     def get_IDs(self, orders):
         order_ids = [order["orderId"] for order in orders]
         return order_ids
