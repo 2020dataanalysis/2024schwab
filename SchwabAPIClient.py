@@ -92,6 +92,7 @@ class SchwabAPIClient:
             'Authorization': f'Bearer {self.oauth_client.access_token}',
             'Accept': 'application/json'
         }
+
         response = requests.get(url, params=params, headers=headers)
 
         if response.status_code == 200:
@@ -99,6 +100,36 @@ class SchwabAPIClient:
         else:
             print(f"Failed to get data from {endpoint}. Error: {response.text}")
             return None
+
+
+
+
+    def get_request_endpoint(self, base_url, endpoint, params=None):
+        """
+        Makes a GET request to the API.
+
+        :param endpoint: API endpoint.
+        :param params: Query parameters (optional).
+        :return: JSON response if successful, None otherwise.
+        """
+        url = f"{base_url}{endpoint}"
+        print(url)
+        headers = {
+            'Authorization': f'Bearer {self.oauth_client.access_token}',
+            'Accept': 'application/json'
+        }
+
+        response = requests.get(url, params=params, headers=headers)
+
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Failed to get data from {endpoint}. Error: {response.text}")
+            return None
+
+
+
+
 
     def post_request(self, endpoint, data=None):
         """
@@ -167,7 +198,7 @@ class SchwabAPIClient:
 
 
 
-
+    #   Get Account Information API's
     def get_account_info(self):
         """
         Retrieves account information for the specified account number.
@@ -181,13 +212,18 @@ class SchwabAPIClient:
         self.save_to_file(endpoint, response)
         return response
 
+    def get_account(self):
+        endpoint = "/accounts"
+        response = self.get_request(endpoint)
+        self.save_to_file(endpoint, response)
+        return response
 
 
-
-
-
-
-
+    def get_account2(self):
+        endpoint = f'/accounts/{self.hashValue}'
+        response = self.get_request(endpoint)
+        self.save_to_file(endpoint, response)
+        return response
 
 
 
@@ -360,8 +396,6 @@ class SchwabAPIClient:
         return self.delete_request(endpoint)
 
 
-
-
     def read_orders_from_file(self, file_path):
         """
         Reads orders from a JSON file.
@@ -379,27 +413,6 @@ class SchwabAPIClient:
         except Exception as e:
             print("Error reading orders from file:", e)
             return None
-
-    # def process_orders_from_file(self, file_path):
-    #     """
-    #     Process orders read from a JSON file and return a list of orderId's.
-
-    #     :param file_path: Path to the JSON file containing orders.
-    #     :return: List of orderId's if successful, None otherwise.
-    #     """
-    #     # Read orders from file
-    #     orders = self.read_orders_from_file(file_path)
-
-    #     # Check if orders were successfully read
-    #     if orders is not None:
-    #         # Extract orderId's from orders
-    #         order_ids = [order.get("orderId") for order in orders]
-    #         return order_ids
-    #     else:
-    #         # Handle case where reading orders failed
-    #         print("Failed to read orders from file. Check the logs for details.")
-    #         return None
-
 
 
     def process_orders_from_file(self, file_path):
@@ -421,3 +434,14 @@ class SchwabAPIClient:
             # Handle case where reading orders failed
             print("Failed to read orders from file. Check the logs for details.")
             return None
+        
+
+
+    def get_ticker_data(self, symbol_id):
+        # Check if access token is valid
+        base_url = 'https://api.schwabapi.com/marketdata/v1'
+        endpoint = f"/{symbol_id}/quotes"
+        response = self.get_request_endpoint(base_url, endpoint)
+        if response:
+            self.save_to_file(endpoint, response)
+        return response
