@@ -433,8 +433,6 @@ class SchwabAPIClient:
             # Handle case where reading orders failed
             print("Failed to read orders from file. Check the logs for details.")
             return None
-        
-
 
     def get_ticker_data(self, symbol_id):
         # Check if access token is valid
@@ -444,3 +442,8 @@ class SchwabAPIClient:
         if response:
             self.save_to_file(endpoint, response)
         return response
+
+
+    def get_IDs(self, orders):
+        order_ids = [order["orderId"] for order in orders]
+        return order_ids
