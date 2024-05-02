@@ -5,7 +5,6 @@ if __name__ == "__main__":
     # Initialize SchwabAPIClient with credentials and base URL
     credentials_file = 'credentials.json'
     grant_flow_type_filenames_file = 'grant_flow_type_filenames.json'
-    base_url = 'https://api.schwabapi.com/trader/v1'
 
     client = SchwabAPIClient(credentials_file, grant_flow_type_filenames_file)
 
