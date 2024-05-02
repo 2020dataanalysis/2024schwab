@@ -22,10 +22,18 @@ if __name__ == "__main__":
 
     # Retrieve all orders for all accounts
     print('\nGet All Orders')
-    days = 0
-    hours = 7
+    status = None
+    status = 'FILLED'
+    if status:
+        print(f'where status = {status}')
+    else:
+        print('where status:')
+        print(client.config['ORDER_STATUS_VALUES'])
+
+    days = 1
+    hours = 6
     minutes = 0
-    all_orders = client.get_all_orders(days, hours, minutes)
+    all_orders = client.get_all_orders(days, hours, minutes, status)
     if all_orders:
         print("All Orders:", all_orders)
     # print(client.config['output_path'])

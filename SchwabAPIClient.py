@@ -102,8 +102,6 @@ class SchwabAPIClient:
             return None
 
 
-
-
     def get_request_endpoint(self, base_url, endpoint, params=None):
         """
         Makes a GET request to the API.
@@ -228,7 +226,7 @@ class SchwabAPIClient:
 
 
 
-    def get_all_orders(self, days, hours, minutes):
+    def get_all_orders(self, days, hours, minutes, status = None):
         """
         Retrieves all orders for all accounts.
 
@@ -254,7 +252,8 @@ class SchwabAPIClient:
         # Define the parameters for the request
         params = {
             "fromEnteredTime": start_time_str,
-            "toEnteredTime": to_time_str
+            "toEnteredTime": to_time_str,
+            "status": status
         }
 
         # Retrieve orders from the endpoint
