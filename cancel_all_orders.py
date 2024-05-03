@@ -18,11 +18,12 @@ if __name__ == "__main__":
         print("Account information:", account_info)
     print(f'client hashValue: {client.hashValue}')
 
-    status = 'PENDING_ACTIVATION'
-    # status = 'WORKING'
+    # status = 'PENDING_ACTIVATION'
+    status = 'WORKING'
 
-    days = 1
-    hours = 6
-    minutes = 0
+    days = 0
+    hours = 1
+    minutes = 10
 
-    client.cancel_all_orders(days, hours, minutes, status)
+    order_ids = client.cancel_all_orders(days, hours, minutes, status)
+    print(f'The following ids were cancelled:{order_ids}')

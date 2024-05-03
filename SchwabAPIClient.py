@@ -144,9 +144,10 @@ class SchwabAPIClient:
             'Content-Type': 'application/json'
         }
         response = requests.post(url, json=data, headers=headers)
-
         if response.status_code == 200:
             return response.json()
+        if response.status_code == 201:
+            return response
         else:
             print(f"Failed to post data to {endpoint}. Error: {response.text}")
             return None
@@ -279,7 +280,7 @@ class SchwabAPIClient:
     def filter_times(self, trades, start_time_str, end_time_str):
         from datetime import datetime
 
-        print(f'start_time_str: {start_time_str}')
+        # print(f'start_time_str: {start_time_str}')
         # Define the format of the input string
         date_format_str = "%Y-%m-%dT%H:%M:%S.%fZ"
         date_format = '%Y-%m-%dT%H:%M:%S'
@@ -349,9 +350,6 @@ class SchwabAPIClient:
         """
         endpoint = f'/accounts/{account_number}/orders'
         response = self.post_request(endpoint, data=order_data)
-        print(response)
-        if response:
-            self.save_to_file(endpoint, response)
         return response
 
     def preview_order(self, account_number, order_data):
@@ -449,14 +447,19 @@ class SchwabAPIClient:
             print('Status needs to be either WORKING OR PENDING_ACTIVATION')
             return
         
-        orders = self.get_all_orders(days, hours, minutes, status)        
+        orders = self.get_all_orders(days, hours, minutes, status)
+        # if not orders:
+        #     print('No orders')
         order_ids = self.get_IDs(orders)
+        # print(f'order_ids: {order_ids}')
+        # if not order_ids:
+            # print('There are no orders to cancel')
         account_number = self.hashValue
         for order_id in order_ids:
             cancellation_result = self.cancel_order(account_number, order_id)
             if cancellation_result:
                 print(f"Order Cancellation Successful: {cancellation_result}")
-
+        return order_ids
 
     def get_IDs(self, orders):
         order_ids = [order["orderId"] for order in orders]
