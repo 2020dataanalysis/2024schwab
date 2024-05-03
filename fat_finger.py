@@ -16,8 +16,10 @@ def cancel_previous_orders(client):
 
 def create_stop_orders(client, price):
     # Calculate stop prices
-    above_stop_price = price + 0.20
-    below_stop_price = price - 0.20
+    gap = .2
+    round(price, 2)
+    above_stop_price = round(price + gap, 2)
+    below_stop_price = round(price - gap, 2)
     
     # Print stop prices
     print("Stop order above:", above_stop_price)
@@ -52,7 +54,8 @@ if __name__ == "__main__":
     # Continuous loop to get current price and create stop orders
     while True:
         ticker_data = client.get_ticker_data(symbol)
-        current_price = ticker_data[symbol]['extended']['lastPrice']
+        # print(ticker_data)
+        current_price = ticker_data[symbol]['quote']['lastPrice']
         print(current_price)
 
         cancel_previous_orders(client)
