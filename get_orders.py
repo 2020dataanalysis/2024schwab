@@ -25,7 +25,7 @@ if __name__ == "__main__":
     status = None
     # status = 'FILLED'
     # status = 'PENDING_ACTIVATION'
-    status = 'WORKING'
+    # status = 'WORKING'
     if status:
         print(f'where status = {status}')
     else:
@@ -33,7 +33,7 @@ if __name__ == "__main__":
         print(client.config['ORDER_STATUS_VALUES'])
 
     days = 0
-    hours = 1
+    hours = 3
     minutes = 20
     all_orders = client.get_all_orders(days, hours, minutes, status)
     print("All Orders:", all_orders)

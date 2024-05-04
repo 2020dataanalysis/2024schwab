@@ -21,7 +21,7 @@ class SchwabAPIClient:
         :param grant_flow_type_filenames_file: Path to the grant flow type filenames file.
         :param base_url: Base URL for the Schwab API.
         """
-
+        self.logger = logging.getLogger(__name__)  # Create a logger instance for logging
         # self.oauth_client = OAuthClient(credentials_file, grant_flow_type_filenames_file)
 
         # Load configuration from either custom or default config file
@@ -117,15 +117,21 @@ class SchwabAPIClient:
             'Accept': 'application/json'
         }
 
-        response = requests.get(url, params=params, headers=headers)
+        # response = requests.get(url, params=params, headers=headers)
 
-        if response.status_code == 200:
+        # if response.status_code == 200:
+        #     return response.json()
+        # else:
+        #     print(f"Failed to get data from {endpoint}. Error: {response.text}")
+        #     return None
+
+        try:
+            response = requests.get(url, params=params, headers=headers)
+            response.raise_for_status()  # Raise exception for non-200 status codes
             return response.json()
-        else:
-            print(f"Failed to get data from {endpoint}. Error: {response.text}")
+        except requests.RequestException as e:
+            self.logger.error(f"Failed to get data from {endpoint}. Error: {e}")
             return None
-
-
 
 
 

@@ -8,7 +8,7 @@ def cancel_previous_orders(client):
 
     days = 0
     hours = 0
-    minutes = 10
+    minutes = 2
 
     order_ids = client.cancel_all_orders(days, hours, minutes, status)
     print(f'The following ids were cancelled:{order_ids}')
@@ -16,7 +16,7 @@ def cancel_previous_orders(client):
 
 def create_stop_orders(client, price):
     # Calculate stop prices
-    gap = .25
+    gap = .3
     round(price, 2)
     upper_price = round(price + gap, 2)
     lower_price = round(price - gap, 2)
@@ -29,7 +29,7 @@ def create_stop_orders(client, price):
     # order_data_sell = {"orderType": "STOP",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "stopPrice": lower_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
 
     # After Hours
-    # order1 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": upper_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
+    order1 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": upper_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 100, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
     order2 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": lower_price, "orderLegCollection": [{"instruction": "BUY", "quantity": 100, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
 
 
@@ -58,12 +58,19 @@ if __name__ == "__main__":
     symbol = 'SPY'
     # Continuous loop to get current price and create stop orders
     while True:
+        cancel_previous_orders(client)
+
         ticker_data = client.get_ticker_data(symbol)
         # print(ticker_data)
-        current_price = ticker_data[symbol]['quote']['lastPrice']
+    
+        # current_price = ticker_data[symbol]['quote']['lastPrice']
+        current_price = 0
+        # Assuming ticker_data is a dictionary containing symbol as keys and quote data as values
+        # symbol is the symbol for which you want to get the current price
+        if symbol in ticker_data and ticker_data[symbol] is not None and 'quote' in ticker_data[symbol] and 'lastPrice' in ticker_data[symbol]['quote']:
+            current_price = ticker_data[symbol]['quote']['lastPrice']
+
         print(current_price)
 
-        cancel_previous_orders(client)
-        time.sleep(1)
         create_stop_orders(client, current_price)
         time.sleep(60)  # Adjust the sleep time as needed
