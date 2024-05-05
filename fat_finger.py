@@ -37,6 +37,15 @@ def create_stop_orders(client, price):
     placed_order = client.place_order(client.hashValue, order2)
 
 
+def get_orders(client, days, hours, minutes, status):
+    orders = client.get_all_orders(days, hours, minutes, status)
+    return orders
+
+
+def get_working_order_ids(client, orders):
+    client.get_IDs(orders)
+
+
 
 if __name__ == "__main__":
     # Initialize SchwabAPIClient with credentials and base URL
@@ -57,9 +66,9 @@ if __name__ == "__main__":
 
     symbol = 'SPY'
     # Continuous loop to get current price and create stop orders
+    cancel_previous_orders(client)
+    order_ids_filled = []
     while True:
-        cancel_previous_orders(client)
-
         ticker_data = client.get_ticker_data(symbol)
         # print(ticker_data)
     
@@ -69,8 +78,20 @@ if __name__ == "__main__":
         # symbol is the symbol for which you want to get the current price
         if symbol in ticker_data and ticker_data[symbol] is not None and 'quote' in ticker_data[symbol] and 'lastPrice' in ticker_data[symbol]['quote']:
             current_price = ticker_data[symbol]['quote']['lastPrice']
-
         print(current_price)
-
         create_stop_orders(client, current_price)
-        time.sleep(60)  # Adjust the sleep time as needed
+        orders = client.get_all_orders(0, 0, 1, 'WORKING')
+        order_ids = client.get_IDs(orders)      # Of orders just made
+        time.sleep(60)
+
+        orders = client.get_all_orders(0, 0, 1, 'WORKING')
+        order_ids2 = client.get_IDs(orders)      # Of orders just made
+        
+        if (len(order_ids) != len(order_ids2)):
+            #   Assume order is filled
+            order_ids_filled = client.get_all_orders(0, 0, 2, 'FILLED')
+            if (order_ids_filled):
+                print(f'Filled order: {order_ids_filled}')
+
+        if order_ids2:
+            order_ids_cancelled = cancel_previous_orders(client)
