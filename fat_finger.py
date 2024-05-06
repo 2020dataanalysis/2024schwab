@@ -113,21 +113,19 @@ if __name__ == "__main__":
         print(f'client Account Number hash value: {client.get_account_number_hash_value}')
 
     symbol = 'SPY'
-    cancel_previous_orders(client)
+    order_ids = client.cancel_all_orders(0, 1, 0, 'WORKING')
+    print(f'The following ids were cancelled:{order_ids}')
     order_ids_filled = []
 
 
     while True:
         ticker_data = client.get_ticker_data(symbol)
         # print(ticker_data)
-    
-        # current_price = ticker_data[symbol]['quote']['lastPrice']
-        current_price = 0
-        # Assuming ticker_data is a dictionary containing symbol as keys and quote data as values
-        # symbol is the symbol for which you want to get the current price
+
+        price = 0
         if symbol in ticker_data and ticker_data[symbol] is not None and 'quote' in ticker_data[symbol] and 'lastPrice' in ticker_data[symbol]['quote']:
             price = ticker_data[symbol]['quote']['lastPrice']
-        print(price)
+            print(price)
 
         id1, id2 = place_bollinger_orders(price)
         time.sleep(60)
