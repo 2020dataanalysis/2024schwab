@@ -237,8 +237,6 @@ class SchwabAPIClient:
         return response
 
 
-
-
     def get_all_orders(self, days, hours, minutes, status = None):
         """
         Retrieves all orders for all accounts.
@@ -366,7 +364,7 @@ class SchwabAPIClient:
         response = self.post_request(endpoint, data=order_data)
         return response
 
-    def preview_order(self, account_number, order_data):
+    def preview_order(self, order_data):
         """
         Previews an order for a specific account.
 
@@ -374,13 +372,14 @@ class SchwabAPIClient:
         :param order_data: Data representing the order to be previewed.
         :return: Order preview JSON if successful, None otherwise.
         """
+        account_number = self.account_hash
         endpoint = f'/accounts/{account_number}/previewOrder'
         response = self.post_request(endpoint, data=order_data)
         if response:
             self.save_to_file(endpoint, response)
         return response
 
-    def replace_order(self, account_number, order_id, updated_data):
+    def replace_order(self, order_id, updated_data):
         """
         Replaces an existing order for a specific account.
 
@@ -389,6 +388,7 @@ class SchwabAPIClient:
         :param updated_data: Updated data representing the order.
         :return: Updated order JSON if successful, None otherwise.
         """
+        account_number = self.account_hash
         endpoint = f'/accounts/{account_number}/orders/{order_id}'
         response = self.put_request(endpoint, data=updated_data)
         if response:

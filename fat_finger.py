@@ -87,6 +87,7 @@ def get_working_order_ids(client, orders):
 
 
 def process_order(client, id):
+    global order_ids_filled
     order = client.get_specific_order(id)
     if order['status'] == 'FILLED':
         order_ids_filled.append(id)
@@ -133,3 +134,5 @@ if __name__ == "__main__":
 
         process_order(client, id1)
         process_order(client, id2)
+
+        print(f'Filled Orders: {order_ids_filled}')
