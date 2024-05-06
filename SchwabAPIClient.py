@@ -463,15 +463,10 @@ class SchwabAPIClient:
             return
         
         orders = self.get_all_orders(days, hours, minutes, status)
-        # if not orders:
-        #     print('No orders')
         order_ids = self.get_IDs(orders)
-        # print(f'order_ids: {order_ids}')
-        # if not order_ids:
-            # print('There are no orders to cancel')
-        account_number = self.hashValue
+        # account_number = self.get_account_number_hash_value()
         for order_id in order_ids:
-            cancellation_result = self.cancel_order(account_number, order_id)
+            cancellation_result = self.cancel_order(order_id)
             if cancellation_result:
                 print(f"Order Cancellation Successful: {cancellation_result}")
         return order_ids
