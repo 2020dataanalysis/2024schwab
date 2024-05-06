@@ -36,6 +36,7 @@ class SchwabAPIClient:
         print(f'base_url: {self.base_url}')
 
         self.oauth_client = OAuthClient(self.config['private'], credentials_file, grant_flow_type_filenames_file)
+        self.account_number = None
 
     def _load_config(self, config_file):
         try:
@@ -47,6 +48,12 @@ class SchwabAPIClient:
             # Load default config
             with open('config.json', 'r') as f:
                 return json.load(f)
+
+    def set_account_number_hash_value(self, hash):
+        self.account_hash = hash
+
+    def get_account_number_hash_value(self):
+        return self.account_hash
 
     def set_base_url(self, base_url):
         self.base_url = base_url
@@ -132,7 +139,6 @@ class SchwabAPIClient:
         except requests.RequestException as e:
             self.logger.error(f"Failed to get data from {endpoint}. Error: {e}")
             return None
-
 
 
     def post_request(self, endpoint, data=None):
@@ -332,7 +338,7 @@ class SchwabAPIClient:
             self.save_to_file(endpoint, response)
         return response
 
-    def get_specific_order(self, account_number, order_id):
+    def get_specific_order(self, order_id):
         """
         Retrieves a specific order by its ID for a specific account.
 
@@ -340,13 +346,14 @@ class SchwabAPIClient:
         :param order_id: ID of the order to retrieve.
         :return: Order JSON if successful, None otherwise.
         """
+        account_number = self.account_hash        
         endpoint = f'/accounts/{account_number}/orders/{order_id}'
         response = self.get_request(endpoint)
         if response:
             self.save_to_file(endpoint, response)
         return response
 
-    def place_order(self, account_number, order_data):
+    def place_order(self, order_data):
         """
         Places an order for a specific account.
 
@@ -354,6 +361,7 @@ class SchwabAPIClient:
         :param order_data: Data representing the order to be placed.
         :return: Order JSON if successful, None otherwise.
         """
+        account_number = self.account_hash
         endpoint = f'/accounts/{account_number}/orders'
         response = self.post_request(endpoint, data=order_data)
         return response
@@ -387,7 +395,7 @@ class SchwabAPIClient:
             self.save_to_file(endpoint, response)
         return response
 
-    def cancel_order(self, account_number, order_id):
+    def cancel_order(self, order_id):
         """
         Cancels an existing order for a specific account.
 
@@ -395,6 +403,7 @@ class SchwabAPIClient:
         :param order_id: ID of the order to be cancelled.
         :return: True if successful, False otherwise.
         """
+        account_number = self.account_hash
         endpoint = f'/accounts/{account_number}/orders/{order_id}'
         return self.delete_request(endpoint)
 
