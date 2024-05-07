@@ -14,15 +14,16 @@ class TradingBot:
         self.order_ids_filled = []
 
     def cancel_previous_orders(self, days=0, hours=0, minutes=0):
-        # status = 'WORKING'
-        status = 'PENDING_ACTIVATION'
+        status = 'WORKING'
+        # status = 'PENDING_ACTIVATION'
         order_ids = self.client.cancel_all_orders(days, hours, minutes, status)
         print(f'The following ids were cancelled:{order_ids}')
 
     def place_order(self, order):
         self.client.place_order(order)
-        # orders = self.client.get_all_orders(0, 0, 1, 'WORKING')
-        orders = self.client.get_all_orders(0, 0, 1, 'PENDING_ACTIVATION')
+        time.sleep(5)
+        orders = self.client.get_all_orders(0, 0, 1, 'WORKING')
+        # orders = self.client.get_all_orders(0, 0, 1, 'PENDING_ACTIVATION')
         order_ids = self.client.get_IDs(orders)
         if order_ids:
             print(f'order_ids: {order_ids}')
@@ -32,29 +33,33 @@ class TradingBot:
         return order_ids
 
     def place_bollinger_orders(self, price):
-        gap = .3
+        gap = .1
         price = round(price, 2)
         upper_price = round(price + gap, 2)
         lower_price = round(price - gap, 2)
         print("Upper order:", upper_price)
         print("Lower order:", lower_price)
-        #   Normal Hours
-        order1 = {"orderType": "STOP",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "stopPrice": upper_price, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
-        order2 = {"orderType": "STOP",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "stopPrice": lower_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
-
-
-        # After Hours
-        order1 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": upper_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 100, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
-        order2 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": lower_price, "orderLegCollection": [{"instruction": "BUY", "quantity": 100, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
-
-
-
-
+        if SESSION == 'NORMAL':
+            #   Normal Hours
+            order1 = {"orderType": "STOP",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "stopPrice": upper_price, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
+            order2 = {"orderType": "STOP",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "stopPrice": lower_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
+        else:
+            # After Hours
+            order1 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": lower_price, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
+            order2 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": upper_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 1, "instrument": { "symbol": "SPY", "assetType": "EQUITY"}}]}
 
         id1_list = self.place_order(order1)
         assert(len(id1_list) == 1)
+        # if not id1_list:
+
+
+
         id1 = id1_list[0]
-        time.sleep(5)
+        if (SESSION == 'EXTO' and not self.order_ids_filled):
+            return id1, None
+        # time.sleep(10)
+
+
         id2_list = self.place_order(order2)
         # assert(len(id2_list) == 2)
         if (len(id2_list) == 2):
@@ -80,6 +85,7 @@ class TradingBot:
                     self.order_ids_filled.append(id)
                 else:
                     self.client.cancel_order(id)
+                    print(f'cancelled order: {id}')
 
 
 if __name__ == "__main__":
@@ -98,10 +104,12 @@ if __name__ == "__main__":
             price = ticker_data[symbol]['quote']['lastPrice']
             print(price)
 
-        # id1, id2 = bot.place_bollinger_orders(price)
+        id1, id2 = bot.place_bollinger_orders(price)
         time.sleep(60)
 
-        # bot.process_order(id1)
-        # bot.process_order(id2)
+        if id1:
+            bot.process_order(id1)
+        if (id2):
+            bot.process_order(id2)
 
-        # print(f'Filled Orders: {bot.order_ids_filled}')
+        print(f'Filled Orders: {bot.order_ids_filled}')
