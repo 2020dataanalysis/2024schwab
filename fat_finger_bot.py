@@ -1,3 +1,5 @@
+#   Can only have 1 stop above or below.
+
 import time
 from SchwabAPIClient import SchwabAPIClient
 
@@ -21,7 +23,7 @@ class TradingBot:
 
     def place_order(self, order):
         self.client.place_order(order)
-        time.sleep(5)
+        time.sleep(1)
 
         #   Assert that there is only 1 working order
         orders = self.client.get_all_orders(0, 0, 1, 'WORKING')
@@ -33,7 +35,7 @@ class TradingBot:
         return order_ids
 
     def place_bollinger_orders(self, symbol, price):
-        gap = .2
+        gap = .01
         # price = round(price, 2)
         upper_price = round(price + gap, 2)
         lower_price = round(price - gap, 2)
@@ -49,8 +51,10 @@ class TradingBot:
             order2 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": upper_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 1, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
 
         id1_list = self.place_order(order1)
-        assert(len(id1_list) == 1)
+        # assert(len(id1_list) == 1)        # Error when gets filled immediately
+        #               need to also check if filled.
         id1 = id1_list[0]
+        id2 = None      # Do not need
         if (SESSION == 'EXTO' and not self.order_ids_filled):
             return id1, None
 
@@ -62,10 +66,12 @@ class TradingBot:
             id2_list_popped = id2_list.pop(index)
             assert(len(id2_list) == 1)
             id2 = id2_list[0]
-        else:
-            assert(len(id2_list) == 1)
+        elif (len(id2_list) == 1):
+            # assert(len(id2_list) == 1)        Error
             id2 = id2_list[0]
             assert(id1 != id2)
+        else:
+            return None, None
         return id1, id2
 
 
@@ -88,8 +94,8 @@ if __name__ == "__main__":
     bot = TradingBot(credentials_file, grant_flow_type_filenames_file)
     symbol = 'SPY'
     bot.cancel_previous_orders(0, 1, 0)
-    SESSION = 'NORMAL'
-    # SESSION = 'EXTO'
+    # SESSION = 'NORMAL'
+    SESSION = 'EXTO'
 
     while True:
         ticker_data = bot.client.get_ticker_data(symbol)
