@@ -33,7 +33,7 @@ class TradingBot:
         return order_ids
 
     def place_bollinger_orders(self, symbol, price):
-        gap = .1
+        gap = .2
         # price = round(price, 2)
         upper_price = round(price + gap, 2)
         lower_price = round(price - gap, 2)
@@ -60,8 +60,8 @@ class TradingBot:
             index = id2_list.index(id1)
             print("Index of", id1, "is:", index)
             id2_list_popped = id2_list.pop(index)
-            assert(len(id2_list_popped) == 1)
-            id2 = id2_list_popped[0]
+            assert(len(id2_list) == 1)
+            id2 = id2_list[0]
         else:
             assert(len(id2_list) == 1)
             id2 = id2_list[0]
@@ -88,8 +88,8 @@ if __name__ == "__main__":
     bot = TradingBot(credentials_file, grant_flow_type_filenames_file)
     symbol = 'SPY'
     bot.cancel_previous_orders(0, 1, 0)
-    # SESSION = 'NORMAL'
-    SESSION = 'EXTO'
+    SESSION = 'NORMAL'
+    # SESSION = 'EXTO'
 
     while True:
         ticker_data = bot.client.get_ticker_data(symbol)
