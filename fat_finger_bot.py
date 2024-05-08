@@ -42,8 +42,9 @@ class TradingBot:
         else:
             print('order_id1: Order not placed')
             orders_cancelled = self.client.get_all_orders(0, 0, 0, 10, 'CANCELLED')
-            order_ids_cancelled = self.client.get_IDs(orders_cancelled)
-            print(f'orders_cancelled: {order_ids_cancelled}')
+            if order_ids_cancelled:
+                order_ids_cancelled = self.client.get_IDs(orders_cancelled)
+                print(f'orders_cancelled: {order_ids_cancelled}')
         return order_ids
 
     def place_bollinger_orders(self, symbol, price):
