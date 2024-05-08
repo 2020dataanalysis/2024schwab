@@ -105,8 +105,8 @@ if __name__ == "__main__":
     bot = TradingBot(credentials_file, grant_flow_type_filenames_file)
     symbol = 'SPY'
     bot.cancel_previous_orders(0, 5, 0, 0)
-    # SESSION = 'NORMAL'
-    SESSION = 'EXTO'
+    SESSION = 'NORMAL'
+    # SESSION = 'EXTO'
 
     while True:
         ticker_data = bot.client.get_ticker_data(symbol)
