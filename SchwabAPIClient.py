@@ -84,7 +84,7 @@ class SchwabAPIClient:
         file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, 'w') as file:
             json.dump(response, file)
-        print(f"Data saved successfully: {file_path}")
+        # print(f"Data saved successfully: {file_path}")
 
     def get_request(self, endpoint, params=None):
         """
@@ -118,7 +118,7 @@ class SchwabAPIClient:
         :return: JSON response if successful, None otherwise.
         """
         url = f"{base_url}{endpoint}"
-        print(url)
+        # print(url)
         headers = {
             'Authorization': f'Bearer {self.oauth_client.access_token}',
             'Accept': 'application/json'
@@ -200,7 +200,7 @@ class SchwabAPIClient:
         response = requests.delete(url, headers=headers)
 
         if response.status_code == 200:
-            print(f"Successfully deleted data from {endpoint}")
+            # print(f"Successfully deleted data from {endpoint}")
             return True
         else:
             print(f"Failed to delete data from {endpoint}. Error: {response.text}")
@@ -237,7 +237,7 @@ class SchwabAPIClient:
         return response
 
 
-    def get_all_orders(self, days, hours, minutes, status = None):
+    def get_all_orders(self, days, hours, minutes, seconds, status = None):
         """
         Retrieves all orders for all accounts.
 
@@ -252,7 +252,7 @@ class SchwabAPIClient:
 
         # Calculate the start time (30 minutes before current UTC time)
         # start_time = now_utc - timedelta(minutes=10)
-        start_time = now_utc - timedelta(days=days, hours=hours, minutes=minutes)
+        start_time = now_utc - timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
         end_time = now_utc
 
 
@@ -266,7 +266,7 @@ class SchwabAPIClient:
             "toEnteredTime": to_time_str,
             "status": status
         }
-
+        # print(params)
         # Retrieve orders from the endpoint
         response = self.get_request(endpoint, params)
 
@@ -305,7 +305,7 @@ class SchwabAPIClient:
         for trade in trades:
             # Remove the timezone offset from the enteredTime string
             entered_time_str = trade["enteredTime"][:-5]  # Remove the timezone offset
-            print(f'entered: {entered_time_str}')
+            # print(f'entered: {entered_time_str}')
             # Parse enteredTime string into datetime object
             entered_time = datetime.strptime(entered_time_str, date_format)
 
@@ -457,12 +457,12 @@ class SchwabAPIClient:
         return response
 
 
-    def cancel_all_orders(self, days, hours, minutes, status = None):
+    def cancel_all_orders(self, days, hours, minutes, seconds, status = None):
         if status not in ['WORKING', 'PENDING_ACTIVATION']:
             print('Status needs to be either WORKING OR PENDING_ACTIVATION')
             return
         
-        orders = self.get_all_orders(days, hours, minutes, status)
+        orders = self.get_all_orders(days, hours, minutes, seconds, status)
         order_ids = self.get_IDs(orders)
         # account_number = self.get_account_number_hash_value()
         for order_id in order_ids:
