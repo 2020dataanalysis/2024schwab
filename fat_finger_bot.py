@@ -29,26 +29,25 @@ class TradingBot:
         orders_working = self.client.get_all_orders(0, 0, 0, 10, 'WORKING')
         orders_filled = self.client.get_all_orders(0, 0, 0, 5, 'FILLED')
         order_ids = self.client.get_IDs(orders_working)
-        # print(f'32 - order_ids: {order_ids}')
         # assert(len(order_ids) == 1)     # If not assumption is wrong
         order_ids_filled = self.client.get_IDs(orders_filled)   #  May assume only if no cancel & no working
         #   For now assuming not filled, may need to work on this later.
 
         if order_ids:
-            print(f'{order_ids} - Working --- ', end='')
+            print(f'{order_ids} - Working ---> ', end='', flush=True)
             # print('.', end='')
             # pass
 
         else:
             print('order_id1: Order not placed')
             orders_cancelled = self.client.get_all_orders(0, 0, 0, 10, 'CANCELLED')
-            if order_ids_cancelled:
+            if orders_cancelled:
                 order_ids_cancelled = self.client.get_IDs(orders_cancelled)
                 print(f'orders_cancelled: {order_ids_cancelled}')
         return order_ids
 
     def place_bollinger_orders(self, symbol, price):
-        gap = .1
+        gap = .2
         # price = round(price, 2)
         upper_price = round(price + gap, 2)
         lower_price = round(price - gap, 2)
@@ -59,8 +58,8 @@ class TradingBot:
             order2 = {"orderType": "STOP",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "stopPrice": lower_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 1, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
         else:
             # After Hours
-            order1 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": lower_price, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
-            order2 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": upper_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 1, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
+            order1 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": lower_price, "orderLegCollection": [{"instruction": "BUY", "quantity": 100, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
+            order2 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": upper_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 100, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
 
         id1_list = self.place_order(order1)
         # assert(len(id1_list) == 1)        # Error when gets filled immediately
@@ -107,7 +106,7 @@ if __name__ == "__main__":
     symbol = 'SPY'
     bot.cancel_previous_orders(0, 5, 0, 0)
     SESSION = 'NORMAL'
-    # SESSION = 'EXTO'
+    SESSION = 'EXTO'
 
     while True:
         ticker_data = bot.client.get_ticker_data(symbol)
