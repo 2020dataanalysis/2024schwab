@@ -47,24 +47,27 @@ class TradingBot:
         return order_ids
 
     def place_bollinger_orders(self, symbol, price):
-        gap = .2
+        gap = .01
         # price = round(price, 2)
         upper_price = round(price + gap, 2)
         lower_price = round(price - gap, 2)
-        # print(f"Lower order: {lower_price} - Upper order: {upper_price}")
+        quantity = 1
         if SESSION == 'NORMAL':
             #   Normal Hours
-            order1 = {"orderType": "STOP",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "stopPrice": upper_price, "orderLegCollection": [{"instruction": "BUY", "quantity": 1, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
-            order2 = {"orderType": "STOP",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "stopPrice": lower_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 1, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
+            order1 = {"orderType": "STOP",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "stopPrice": upper_price, "orderLegCollection": [{"instruction": "BUY", "quantity": quantity, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
+            order2 = {"orderType": "STOP",  "session": "NORMAL",  "duration": "DAY",  "orderStrategyType": "SINGLE", "stopPrice": lower_price, "orderLegCollection": [{"instruction": "SELL", "quantity": quantity, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
         else:
             # After Hours
-            order1 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": lower_price, "orderLegCollection": [{"instruction": "BUY", "quantity": 100, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
-            order2 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": upper_price, "orderLegCollection": [{"instruction": "SELL", "quantity": 100, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
+            order1 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": lower_price, "orderLegCollection": [{"instruction": "BUY", "quantity": quantity, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
+            order2 = {"orderType": "LIMIT",  "session": "EXTO",  "duration": "DAY",  "orderStrategyType": "SINGLE", "price": upper_price, "orderLegCollection": [{"instruction": "SELL", "quantity": quantity, "instrument": { "symbol": symbol, "assetType": "EQUITY"}}]}
 
         id1_list = self.place_order(order1)
         # assert(len(id1_list) == 1)        # Error when gets filled immediately
         #               need to also check if filled.
-        id1 = id1_list[0]
+
+        id1 = None
+        if len(id1_list):
+            id1 = id1_list[0]
         id2 = None      # Do not need
         if (SESSION == 'EXTO' and not self.order_ids_filled):
             return id1, None
@@ -111,17 +114,22 @@ if __name__ == "__main__":
     while True:
         ticker_data = bot.client.get_ticker_data(symbol)
         price = 0
-        if symbol in ticker_data and ticker_data[symbol] is not None and 'quote' in ticker_data[symbol] and 'lastPrice' in ticker_data[symbol]['quote']:
-            price = ticker_data[symbol]['quote']['lastPrice']
-            # print(price)
+        try:
+            if symbol in ticker_data and ticker_data[symbol] is not None and 'quote' in ticker_data[symbol] and 'lastPrice' in ticker_data[symbol]['quote']:
+                price = ticker_data[symbol]['quote']['lastPrice']
+                # print(price)
+        except Exception as e:
+            # print()
+            print(e)
 
-        id1, id2 = bot.place_bollinger_orders(symbol, price)
-        time.sleep(20)
+        if price:
+            id1, id2 = bot.place_bollinger_orders(symbol, price)
+            time.sleep(20)
 
-        if id1:
-            bot.process_order(id1)
-        if id2:
-            bot.process_order(id2)
+            if id1:
+                bot.process_order(id1)
+            if id2:
+                bot.process_order(id2)
 
-        if bot.order_ids_filled:
-            print(f'{bot.order_ids_filled} - Filled')
+            if bot.order_ids_filled:
+                print(f'{bot.order_ids_filled} - Filled')
