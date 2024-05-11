@@ -329,6 +329,7 @@ class OAuthClient:
             with open(token_file_path, 'r') as file:
                 token_data = json.load(file)
             self.access_token = token_data['access_token']
+            self.access_token_expiration_time = token_data['access_token_expiration_time']
             self.refresh_token = None
             if 'refresh_token' in token_data:
                 self.refresh_token = token_data['refresh_token']
