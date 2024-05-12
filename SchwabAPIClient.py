@@ -3,7 +3,7 @@
 import json
 import requests
 import logging
-# import asyncio
+import asyncio
 
 from pathlib import Path
 from OauthClient import OAuthClient
@@ -43,7 +43,7 @@ class SchwabAPIClient:
 
         # Start the refresh token timer
         # print('calling asyncio')
-        # asyncio.run(self.oauth_client.refresh_token_timer())
+        asyncio.run(self.oauth_client.refresh_token_timer())
 
 
     def _load_config(self, config_file):

@@ -5,6 +5,7 @@ import logging
 import asyncio
 from SchwabAPIClient import SchwabAPIClient
 
+
 class TradingBot:
     def __init__(self, credentials_file, grant_flow_type_filenames_file):
         self.client = SchwabAPIClient(credentials_file, grant_flow_type_filenames_file)
@@ -129,20 +130,18 @@ class TradingBot:
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)  # Set logging level to INFO
     credentials_file = 'credentials.json'
     grant_flow_type_filenames_file = 'grant_flow_type_filenames.json'
     bot = TradingBot(credentials_file, grant_flow_type_filenames_file)
     symbol = 'SPY'
-    # bot.cancel_previous_orders(0, 2, 0, 0)
+    bot.cancel_previous_orders(0, 2, 0, 0)
     SESSION = 'NORMAL'
     # SESSION = 'EXTO'
-    # Configure logging
-    logging.basicConfig(level=logging.INFO)  # Set logging level to INFO
-    
-    # asyncio.run(refresh_token_timer(bot))
+    print('************')
+    logging.info("ready to loop")
 
-
-    # while True:
+    while True:
     #     ticker_data = bot.client.get_ticker_data(symbol)
     #     price = 0
     #     try:
@@ -168,3 +167,5 @@ if __name__ == "__main__":
 
         # print(bot.client.access_token_expiration_time)
         # logging.info("Refreshing access token...")
+        print('.', end='')
+        time.sleep(1)
