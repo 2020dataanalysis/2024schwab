@@ -390,10 +390,7 @@ class OAuthClient:
                 print(f'OauthClient: refresh_token_timer(): 359 remaining_time: {remaining_time}')
 
                 #   Use 1 second instead of 0 because it may come back milliseconds before & loop a couple times before less than 0
-                if remaining_time > 1:
-                    await asyncio.sleep(remaining_time)
-                    asyncio.create_task(self.refresh_token_timer())
-                else:
+                if remaining_time < 1:
                     print("async refresh_token_timer(): Access token already expired.")
                     token_file_key = self.REFRESH_TOKEN_KEY
                     logging.info("Log Perform Refresh Grant Flow")
@@ -402,6 +399,12 @@ class OAuthClient:
                     print('load token file')  
                     self.load_token_file(token_file_key)
                     self.refresh_token_grant_flow(token_file_key)
+                    expiration_time = datetime.utcfromtimestamp(self.access_token_expiration_time)
+                    remaining_time = (expiration_time - datetime.utcnow()).total_seconds()
+                    print(f'OauthClient: refresh_token_timer(): 404 remaining_time: {remaining_time}')
+
+                await asyncio.sleep(remaining_time)
+                asyncio.create_task(self.refresh_token_timer())
 
             else:
                 print("Access token expiration time is not in the correct format.")
