@@ -1,6 +1,8 @@
 #   Can only have 1 stop above or below.
 
 import time
+import logging
+import asyncio
 from SchwabAPIClient import SchwabAPIClient
 
 class TradingBot:
@@ -109,33 +111,60 @@ class TradingBot:
                 id2_list_popped = self.order_ids_working.pop(index)
 
 
+
+
+
+# async def refresh_token_timer(bot):
+#     logging.info('async def refresh_token_timer')
+#     expiration_time = bot.client.access_token_expiration_time
+#     logging.info(f'expiration_time: {expiration_time}')
+#     while True:
+#         logging.info("Refreshing access token...")
+#         # Your code to refresh the access token here
+#         await asyncio.sleep(expiration_time - time.time() - 10)  # Refresh token 10 seconds before expiration
+
+
+
+
+
+
 if __name__ == "__main__":
     credentials_file = 'credentials.json'
     grant_flow_type_filenames_file = 'grant_flow_type_filenames.json'
     bot = TradingBot(credentials_file, grant_flow_type_filenames_file)
     symbol = 'SPY'
-    bot.cancel_previous_orders(0, 2, 0, 0)
+    # bot.cancel_previous_orders(0, 2, 0, 0)
     SESSION = 'NORMAL'
     # SESSION = 'EXTO'
+    # Configure logging
+    logging.basicConfig(level=logging.INFO)  # Set logging level to INFO
+    
+    # asyncio.run(refresh_token_timer(bot))
 
-    while True:
-        ticker_data = bot.client.get_ticker_data(symbol)
-        price = 0
-        try:
-            if symbol in ticker_data and ticker_data[symbol] is not None and 'quote' in ticker_data[symbol] and 'lastPrice' in ticker_data[symbol]['quote']:
-                price = ticker_data[symbol]['quote']['lastPrice']
-                # print(price)
-        except Exception as e:
-            # print()
-            print(e)
 
-        if price:
-            id1, id2 = bot.place_bollinger_orders(symbol, price)
-            time.sleep(20)
+    # while True:
+    #     ticker_data = bot.client.get_ticker_data(symbol)
+    #     price = 0
+    #     try:
+    #         if symbol in ticker_data and ticker_data[symbol] is not None and 'quote' in ticker_data[symbol] and 'lastPrice' in ticker_data[symbol]['quote']:
+    #             price = ticker_data[symbol]['quote']['lastPrice']
+    #             print(price)
+    #     except Exception as e:
+    #         # print()
+    #         print(e)
 
-            if id1:
-                bot.process_order(id1)
-            if id2:
-                bot.process_order(id2)
+        # if price:
+        #     id1, id2 = bot.place_bollinger_orders(symbol, price)
+        #     time.sleep(20)
 
-            print(f'{bot.order_ids_filled}, {bot.order_ids_working} - Filled, Working')
+        #     if id1:
+        #         bot.process_order(id1)
+        #     if id2:
+        #         bot.process_order(id2)
+
+        #     print(f'{bot.order_ids_filled}, {bot.order_ids_working} - Filled, Working')
+        # print('.', end='')
+
+
+        # print(bot.client.access_token_expiration_time)
+        # logging.info("Refreshing access token...")

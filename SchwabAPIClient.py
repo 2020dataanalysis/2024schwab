@@ -3,6 +3,8 @@
 import json
 import requests
 import logging
+# import asyncio
+
 from pathlib import Path
 from OauthClient import OAuthClient
 
@@ -37,6 +39,12 @@ class SchwabAPIClient:
 
         self.oauth_client = OAuthClient(self.config['private'], credentials_file, grant_flow_type_filenames_file)
         self.account_number = None
+
+
+        # Start the refresh token timer
+        # print('calling asyncio')
+        # asyncio.run(self.oauth_client.refresh_token_timer())
+
 
     def _load_config(self, config_file):
         try:

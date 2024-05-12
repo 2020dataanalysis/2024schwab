@@ -18,8 +18,11 @@ import json
 import requests
 import base64
 import time
+import logging
 from pathlib import Path
 from urllib.parse import unquote
+import asyncio
+from datetime import datetime
 
 class OAuthClient:
     AUTHORIZATION_CODE_KEY = 'AUTHORIZATION_CODE'
@@ -50,6 +53,8 @@ class OAuthClient:
                 self.redirect_uri = credentials.get('redirect_uri')
                 self.authorization_endpoint = credentials.get('authorization_endpoint')
                 self.token_url = credentials.get('token_url')
+                logging.info(f'token_url: {self.token_url}')
+
         except FileNotFoundError:
             print(f"Credentials file '{self.credentials_file}' not found.")
             self.app_key = None
@@ -337,6 +342,46 @@ class OAuthClient:
             print(f'Access token file {token_file} not found.')
             self.access_token = None
             self.refresh_token = None
+
+
+    # async def refresh_token_timer(self):
+    #     if self.access_token_expiration_time:
+    #         # Calculate the time remaining until token expiration
+    #         expiration_time = datetime.fromisoformat(self.access_token_expiration_time)
+    #         remaining_time = (expiration_time - datetime.utcnow()).total_seconds()
+    #         print(f'remaining_time: {remaining_time}')
+    #         if remaining_time > 0:
+    #             # Schedule the timer to refresh the token
+    #             await asyncio.sleep(remaining_time)
+    #             # Call the method to refresh the token
+    #             # self.refresh_token_method()  # Replace with your actual method to refresh the token
+    #             self.manage_tokens()
+    #             # Reschedule the timer for the next expiration time
+    #             asyncio.create_task(self.refresh_token_timer())
+    #         else:
+    #             print("Access token already expired.")
+    #             # self.manage_tokens()
+    #     else:
+    #         print("Access token expiration time not set.")
+
+
+    # async def refresh_token_timer(self):
+    #     if self.access_token_expiration_time:
+    #         if isinstance(self.access_token_expiration_time, int):
+    #             expiration_time = datetime.utcfromtimestamp(self.access_token_expiration_time)
+    #             remaining_time = (expiration_time - datetime.utcnow()).total_seconds()
+    #             print(f'remaining_time: {remaining_time}')
+    #             if remaining_time > 0:
+    #                 await asyncio.sleep(remaining_time)
+    #                 self.refresh_token_method()  # Replace with your actual method to refresh the token
+    #                 self.manage_tokens()
+    #                 asyncio.create_task(self.refresh_token_timer())
+    #             else:
+    #                 print("Access token already expired.")
+    #         else:
+    #             print("Access token expiration time is not in the correct format.")
+    #     else:
+    #         print("Access token expiration time not set.")
 
 
     def manage_tokens(self):
