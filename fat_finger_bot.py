@@ -1,53 +1,83 @@
-#   Can only have 1 stop above or below.
-
 import time
 import logging
 import asyncio
 from SchwabAPIClient import SchwabAPIClient
 
+# # Set up logging configuration
+# logging.basicConfig(filename='trading_bot.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# # Define a stream handler to print logs to the console
+# console = logging.StreamHandler()
+# console.setLevel(logging.INFO)
+# console.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+# logging.getLogger('').addHandler(console)
+
+
+times_up = False
+
+def configure_logging():
+    # Set up logging configuration
+    logging.basicConfig(filename='trading_bot.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+    # Define a stream handler to print logs to the console
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    console.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    logging.getLogger('').addHandler(console)
+
+    return logging.getLogger(__name__)
+
+
+
+
 
 class TradingBot:
+    # def __init__(self, credentials_file, grant_flow_type_filenames_file):
+        # pass
+
     def __init__(self, credentials_file, grant_flow_type_filenames_file):
+        # self.logger = logger
+        # logger.info('***************************************** - ')
+        # Initialize Schwab API client
+        
+
+
         self.client = SchwabAPIClient(credentials_file, grant_flow_type_filenames_file)
         account_info = self.client.get_account_info()
         self.client.set_account_number_hash_value(account_info[0]['hashValue'])
+        # self.logger.info('***************************************** - ')
 
         if account_info:
-            print("Account information:", account_info)
-            print(f'client Account Number hash value: {self.client.get_account_number_hash_value()}')
+            # logger.info("Account information: %s", account_info)
+            # logger.info('Client Account Number hash value: %s', self.client.get_account_number_hash_value())
+            pass
 
         self.order_ids_working = []
         self.order_ids_filled = []
 
     def cancel_previous_orders(self, days=0, hours=0, minutes=0, seconds=0):
         status = 'WORKING'
-        # status = 'PENDING_ACTIVATION'
         order_ids = self.client.cancel_all_orders(days, hours, minutes, seconds, status)
-        print(f'The following ids were cancelled:{order_ids}')
+        # logger.info('The following ids were cancelled: %s', order_ids)
 
     def place_order(self, order):
         self.client.place_order(order)
         time.sleep(2)
 
-        #   Assert that there is only 1 working order
+        # Assert that there is only 1 working order
         orders_working = self.client.get_all_orders(0, 0, 0, 10, 'WORKING')
-        orders_filled = self.client.get_all_orders(0, 0, 0, 5, 'FILLED')
         order_ids = self.client.get_IDs(orders_working)
 
-        order_ids_filled = self.client.get_IDs(orders_filled)   #  May assume only if no cancel & no working
-        #   For now assuming not filled, may need to work on this later.
-
         if order_ids:
-            print(f'{order_ids} - Working ---> ', end='', flush=True)
+            # logging.info('%s - Working', order_ids)
             self.order_ids_working.append(order_ids[0])
-            assert( len(order_ids) == 1)    # If not 1 then need to use list comprehension
-
+            assert len(order_ids) == 1
         else:
-            print('order_id1: Order not placed')
+            # logging.info('Order not placed')
             orders_cancelled = self.client.get_all_orders(0, 0, 0, 10, 'CANCELLED')
             if orders_cancelled:
                 order_ids_cancelled = self.client.get_IDs(orders_cancelled)
-                print(f'orders_cancelled: {order_ids_cancelled}')
+                # logging.info('Orders cancelled: %s', order_ids_cancelled)
         return order_ids
 
     def place_bollinger_orders(self, symbol, price):
@@ -69,8 +99,6 @@ class TradingBot:
         if len(id1_list):
             id1 = id1_list[0]
 
-
-
         if (SESSION == 'EXTO' and not self.order_ids_filled):
             return id1, None
         time.sleep(1)
@@ -82,26 +110,22 @@ class TradingBot:
             assert(len(id2_list) == 1)
             id2 = id2_list[0]
         elif (len(id2_list) == 1):
-            # assert(len(id2_list) == 1)        Error
             id2 = id2_list[0]
             assert(id1 != id2)
         else:
             return None, None
         return id1, id2
 
-
     def process_order(self, id):
         order = self.client.get_specific_order(id)
         if not order:
             print(f'order is None: {order}')
         else:
-            # if 'status' in order:
             status = order['status']
             if status == 'WORKING':
                 self.client.cancel_order(id)
                 self.order_ids_working
-                
-                print(f'{id} - cancelled order')
+                # logging.info('%s - cancelled order', id)
                 index = self.order_ids_working.index(id)
                 id2_list_popped = self.order_ids_working.pop(index)
 
@@ -112,45 +136,43 @@ class TradingBot:
                 id2_list_popped = self.order_ids_working.pop(index)
 
 
-
-
-
-# async def refresh_token_timer(bot):
-#     logging.info('async def refresh_token_timer')
-#     expiration_time = bot.client.access_token_expiration_time
-#     logging.info(f'expiration_time: {expiration_time}')
-#     while True:
-#         logging.info("Refreshing access token...")
-#         # Your code to refresh the access token here
-#         await asyncio.sleep(expiration_time - time.time() - 10)  # Refresh token 10 seconds before expiration
-
+async def token_timer():
+    global times_up
+    # logger.info("token_timer: ")
+    remaining_time = bot.client.oauth_client.refresh_token_timer()
+    # logger.info(f'remaining_time: {remaining_time}')
+    times_up = True
+    await asyncio.sleep(10)
+    asyncio.create_task(token_timer())
 
 
 
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)  # Set logging level to INFO
+    # global times_up
+    # Configure logging
+    logger = configure_logging()
+    logger.info('Initial Log')
     credentials_file = 'credentials.json'
     grant_flow_type_filenames_file = 'grant_flow_type_filenames.json'
     bot = TradingBot(credentials_file, grant_flow_type_filenames_file)
     symbol = 'SPY'
     bot.cancel_previous_orders(0, 2, 0, 0)
     SESSION = 'NORMAL'
-    # SESSION = 'EXTO'
-    print('************')
-    logging.info("ready to loop")
+    logger.info('while True')
+    asyncio.run(token_timer())
 
     while True:
-    #     ticker_data = bot.client.get_ticker_data(symbol)
-    #     price = 0
-    #     try:
-    #         if symbol in ticker_data and ticker_data[symbol] is not None and 'quote' in ticker_data[symbol] and 'lastPrice' in ticker_data[symbol]['quote']:
-    #             price = ticker_data[symbol]['quote']['lastPrice']
-    #             print(price)
-    #     except Exception as e:
-    #         # print()
-    #         print(e)
+        ticker_data = bot.client.get_ticker_data(symbol)
+        price = 0
+        try:
+            if symbol in ticker_data and ticker_data[symbol] is not None and 'quote' in ticker_data[symbol] and 'lastPrice' in ticker_data[symbol]['quote']:
+                price = ticker_data[symbol]['quote']['lastPrice']
+                print(price)
+        except Exception as e:
+            # print()
+            print(e)
 
         # if price:
         #     id1, id2 = bot.place_bollinger_orders(symbol, price)
@@ -167,5 +189,16 @@ if __name__ == "__main__":
 
         # print(bot.client.access_token_expiration_time)
         # logging.info("Refreshing access token...")
-        print('.', end='')
+
+        remaining_time = bot.client.oauth_client.refresh_token_timer()
+        # print(f'loop: remaining_time: {remaining_time}')
+        # logger.info("loop")
+        
+        if times_up:
+            times_up = False
+            print('times_up')
+            remaining_time = bot.client.oauth_client.refresh_token_timer()
+            logging.info(f'loop: remaining_time: {remaining_time}')
+
+
         time.sleep(1)

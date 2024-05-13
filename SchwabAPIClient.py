@@ -15,6 +15,9 @@ class SchwabAPIClient:
     ACCOUNT_ACCESS_URL_KEY = 'ACCOUNT_ACCESS'
     MARKET_DATA_KEY = 'MARKET_DATA_PRODUCTION'
 
+    # def __init__(self, credentials_file, grant_flow_type_filenames_file, config_file='config.json'):
+        # pass
+
     def __init__(self, credentials_file, grant_flow_type_filenames_file, config_file='config.json'):
         """
         Initializes the SchwabAPIClient with OAuth credentials and base URL.
@@ -23,27 +26,28 @@ class SchwabAPIClient:
         :param grant_flow_type_filenames_file: Path to the grant flow type filenames file.
         :param base_url: Base URL for the Schwab API.
         """
-        self.logger = logging.getLogger(__name__)  # Create a logger instance for logging
+        # self.logger = logging.getLogger(__name__)  # Create a logger instance for logging
         # self.oauth_client = OAuthClient(credentials_file, grant_flow_type_filenames_file)
+        # self.logger = logger
+        # logger.info('SchwabAPIClient')
+
 
         # Load configuration from either custom or default config file
         config_path = Path('config') / config_file
         self.config = self._load_config(config_path)
-        print(f'config: {self.config}')
-        print(self.config.keys())
+        # print(f'config: {self.config}')
+        # print(self.config.keys())
         # Extract base URLs from configuration
         self.base_urls = self.config.get('BASE_URLS', {})
-        print(self.base_urls)
+        # print(self.base_urls)
         self.base_url = self.base_urls[self.ACCOUNT_ACCESS_URL_KEY]
-        print(f'base_url: {self.base_url}')
+        # print(f'base_url: {self.base_url}')
 
         self.oauth_client = OAuthClient(self.config['private'], credentials_file, grant_flow_type_filenames_file)
         self.account_number = None
-
-
         # Start the refresh token timer
         # print('calling asyncio')
-        asyncio.run(self.oauth_client.refresh_token_timer())
+        # asyncio.run(self.oauth_client.refresh_token_timer())
 
 
     def _load_config(self, config_file):
@@ -52,7 +56,7 @@ class SchwabAPIClient:
             with open(config_file, 'r') as f:
                 return json.load(f)
         except FileNotFoundError:
-            print(f"Warning: Config file '{config_file}' not found. Using default config.")
+            # print(f"Warning: Config file '{config_file}' not found. Using default config.")
             # Load default config
             with open('config.json', 'r') as f:
                 return json.load(f)
@@ -75,7 +79,7 @@ class SchwabAPIClient:
                 #     print(f"Grant Flow Type: {flow_type}, Filename: {filename}")
 
         except FileNotFoundError:
-            print(f"Config file '{self.grant_flow_type_filenames_file}' not found.")
+            # print(f"Config file '{self.grant_flow_type_filenames_file}' not found.")
             self.grant_flow_type_filenames = {}
 
 
@@ -113,7 +117,7 @@ class SchwabAPIClient:
         if response.status_code == 200:
             return response.json()
         else:
-            print(f"Failed to get data from {endpoint}. Error: {response.text}")
+            # print(f"Failed to get data from {endpoint}. Error: {response.text}")
             return None
 
 
@@ -145,7 +149,7 @@ class SchwabAPIClient:
             response.raise_for_status()  # Raise exception for non-200 status codes
             return response.json()
         except requests.RequestException as e:
-            self.logger.error(f"Failed to get data from {endpoint}. Error: {e}")
+            # self.logger.error(f"Failed to get data from {endpoint}. Error: {e}")
             return None
 
 
@@ -169,7 +173,7 @@ class SchwabAPIClient:
         if response.status_code == 201:
             return response
         else:
-            print(f"Failed to post data to {endpoint}. Error: {response.text}")
+            # print(f"Failed to post data to {endpoint}. Error: {response.text}")
             return None
 
     def put_request(self, endpoint, data=None):
@@ -191,7 +195,7 @@ class SchwabAPIClient:
         if response.status_code == 200:
             return response.json()
         else:
-            print(f"Failed to put data to {endpoint}. Error: {response.text}")
+            # print(f"Failed to put data to {endpoint}. Error: {response.text}")
             return None
 
     def delete_request(self, endpoint):
@@ -211,7 +215,7 @@ class SchwabAPIClient:
             # print(f"Successfully deleted data from {endpoint}")
             return True
         else:
-            print(f"Failed to delete data from {endpoint}. Error: {response.text}")
+            # print(f"Failed to delete data from {endpoint}. Error: {response.text}")
             return False
 
 
@@ -290,8 +294,8 @@ class SchwabAPIClient:
         else:
             # Handle error message
             error_message = "{} is not a valid value for fromEnteredTime".format(start_time_str)
-            print("Failed to get data from {}. Error: {}".format(endpoint, error_message))
-            print("No orders found within the specified time range.")
+            # print("Failed to get data from {}. Error: {}".format(endpoint, error_message))
+            # print("No orders found within the specified time range.")
             return None
 
 
@@ -428,10 +432,10 @@ class SchwabAPIClient:
                 orders = json.load(file)
             return orders
         except FileNotFoundError:
-            print("File not found:", file_path)
+            # print("File not found:", file_path)
             return None
         except Exception as e:
-            print("Error reading orders from file:", e)
+            # print("Error reading orders from file:", e)
             return None
 
 
@@ -452,7 +456,7 @@ class SchwabAPIClient:
             return pending_activation_order_ids
         else:
             # Handle case where reading orders failed
-            print("Failed to read orders from file. Check the logs for details.")
+            # print("Failed to read orders from file. Check the logs for details.")
             return None
 
     def get_ticker_data(self, symbol_id):
@@ -467,7 +471,7 @@ class SchwabAPIClient:
 
     def cancel_all_orders(self, days, hours, minutes, seconds, status = None):
         if status not in ['WORKING', 'PENDING_ACTIVATION']:
-            print('Status needs to be either WORKING OR PENDING_ACTIVATION')
+            # print('Status needs to be either WORKING OR PENDING_ACTIVATION')
             return
         
         orders = self.get_all_orders(days, hours, minutes, seconds, status)
@@ -476,7 +480,8 @@ class SchwabAPIClient:
         for order_id in order_ids:
             cancellation_result = self.cancel_order(order_id)
             if cancellation_result:
-                print(f"Order Cancellation Successful: {cancellation_result}")
+                # print(f"Order Cancellation Successful: {cancellation_result}")
+                pass
         return order_ids
 
     def get_IDs(self, orders):
