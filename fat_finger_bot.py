@@ -1,20 +1,11 @@
 #   Add function if get 401 to call refresh token
+#   Not able to place 2 stop orders above & below a price
 
 
 import time
 import logging
 import asyncio
 from SchwabAPIClient import SchwabAPIClient
-
-# # Set up logging configuration
-# logging.basicConfig(filename='trading_bot.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-# # Define a stream handler to print logs to the console
-# console = logging.StreamHandler()
-# console.setLevel(logging.INFO)
-# console.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-# logging.getLogger('').addHandler(console)
-
 
 
 def configure_logging():
@@ -26,11 +17,7 @@ def configure_logging():
     console.setLevel(logging.INFO)
     console.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
     logging.getLogger('').addHandler(console)
-
     return logging.getLogger(__name__)
-
-
-
 
 
 class TradingBot:
@@ -101,21 +88,21 @@ class TradingBot:
         if len(id1_list):
             id1 = id1_list[0]
 
-        if (SESSION == 'EXTO' and not self.order_ids_filled):
-            return id1, None
-        time.sleep(1)
-        id2_list = self.place_order(order2)
-        if (len(id2_list) == 2):
-            index = id2_list.index(id1)
-            print("Index of", id1, "is:", index)
-            id2_list_popped = id2_list.pop(index)
-            assert(len(id2_list) == 1)
-            id2 = id2_list[0]
-        elif (len(id2_list) == 1):
-            id2 = id2_list[0]
-            assert(id1 != id2)
-        else:
-            return None, None
+        # if (SESSION == 'EXTO' and not self.order_ids_filled):
+        #     return id1, None
+        # time.sleep(1)
+        # id2_list = self.place_order(order2)
+        # if (len(id2_list) == 2):
+        #     index = id2_list.index(id1)
+        #     print("Index of", id1, "is:", index)
+        #     id2_list_popped = id2_list.pop(index)
+        #     assert(len(id2_list) == 1)
+        #     id2 = id2_list[0]
+        # elif (len(id2_list) == 1):
+        #     id2 = id2_list[0]
+        #     assert(id1 != id2)
+        # else:
+        #     return None, None
         return id1, id2
 
     def process_order(self, id):
@@ -140,7 +127,6 @@ class TradingBot:
 
 
 if __name__ == "__main__":
-    # global times_up
     # Configure logging
     logger = configure_logging()
     logger.info('Initial Log')
@@ -163,14 +149,14 @@ if __name__ == "__main__":
             # print()
             print(e)
 
-        # if price:
-        #     id1, id2 = bot.place_bollinger_orders(symbol, price)
-        #     time.sleep(20)
+        if price:
+            id1, id2 = bot.place_bollinger_orders(symbol, price)
+            time.sleep(20)
 
-        #     if id1:
-        #         bot.process_order(id1)
-        #     if id2:
-        #         bot.process_order(id2)
+            if id1:
+                bot.process_order(id1)
+            # if id2:
+            #     bot.process_order(id2)
 
         #     print(f'{bot.order_ids_filled}, {bot.order_ids_working} - Filled, Working')
         # print('.', end='')
