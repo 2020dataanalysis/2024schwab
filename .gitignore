@@ -5,4 +5,4 @@ __pycache__
 credentials.json
 private
 output
-*.log
+refresh_token.log

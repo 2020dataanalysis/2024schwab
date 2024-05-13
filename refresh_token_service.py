@@ -22,9 +22,9 @@ class TradingBot:
         account_info = self.client.get_account_info()
         self.client.set_account_number_hash_value(account_info[0]['hashValue'])
  
-        # if account_info:
-        #     logger.info("Account information: %s", account_info)
-        #     logger.info('Client Account Number hash value: %s', self.client.get_account_number_hash_value())
+        if account_info:
+            print("Account information: %s", account_info)
+            print('Client Account Number hash value: %s', self.client.get_account_number_hash_value())
 
 
 async def token_timer():
