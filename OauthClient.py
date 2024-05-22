@@ -189,8 +189,8 @@ class OAuthClient:
             f"{self.authorization_endpoint}?client_id={self.app_key}"
             f"&redirect_uri={self.redirect_uri}&response_type=code"
         )
-        # print("Please visit the following URL and authorize the application:")
-        # print(authorization_url)
+        print("Please visit the following URL and authorize the application:")
+        print(authorization_url)
 
         # After user authorization, the authorization code will be obtained via the redirect URI
         authorization_code_url = input(
@@ -354,7 +354,7 @@ class OAuthClient:
         # Check if access token is valid with Refresh Flow
         token_file_key = self.REFRESH_TOKEN_KEY
         token_file = self.grant_flow_type_filenames[token_file_key]
-        # print(f'token_file: {token_file}')
+        print(f'token_file: {token_file}')
         import os
         if os.path.exists(Path(self.credentials_path) / token_file):
             # print(f'File Exists: {token_file}')

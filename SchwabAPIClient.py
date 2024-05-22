@@ -219,8 +219,6 @@ class SchwabAPIClient:
             return False
 
 
-
-
     #   Get Account Information API's
     def get_account_info(self):
         """

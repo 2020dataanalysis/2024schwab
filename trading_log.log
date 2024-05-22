@@ -1,0 +1,63 @@
+INFO:root:Time: 2024-05-21T19:49:00+0000, OrderId: 1000552264507, Instruction: SELL_SHORT, Quantity: 100.0, Price: 530.856, Position: -100.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:49:10+0000, OrderId: 1000552264525, Instruction: SELL_SHORT, Quantity: 100.0, Price: 530.8401, Position: -200.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:50:03+0000, OrderId: 1000552264587, Instruction: BUY_TO_COVER, Quantity: 200.0, Price: 530.9499, Position: 0.0, StrategyType: FLATTEN
+INFO:root:Time: 2024-05-21T19:50:03+0000, OrderId: 1000552264587, StrategyType: FLATTEN, Profit: -20.369999999979882
+INFO:root:Time: 2024-05-21T19:50:05+0000, OrderId: 1000552264590, Instruction: BUY, Quantity: 100.0, Price: 530.92, Position: 100.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:50:09+0000, OrderId: 1000552264596, Instruction: BUY, Quantity: 24.0, Price: 530.9399, Position: 124.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:50:09+0000, OrderId: 1000552264596, Instruction: BUY, Quantity: 76.0, Price: 530.93, Position: 200.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:50:19+0000, OrderId: 1000552264613, Instruction: BUY, Quantity: 50.0, Price: 530.97, Position: 250.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:51:57+0000, OrderId: 1000552264742, Instruction: SELL, Quantity: 250.0, Price: 530.855, Position: 0.0, StrategyType: FLATTEN
+INFO:root:Time: 2024-05-21T19:51:57+0000, OrderId: 1000552264742, StrategyType: FLATTEN, Profit: -19.98759999997901
+INFO:root:Time: 2024-05-21T19:51:58+0000, OrderId: 1000552264748, Instruction: SELL_SHORT, Quantity: 50.0, Price: 530.905, Position: -50.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:52:10+0000, OrderId: 1000552264759, Instruction: BUY_TO_COVER, Quantity: 50.0, Price: 530.9899, Position: 0.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:52:13+0000, OrderId: 1000552264765, Instruction: BUY, Quantity: 50.0, Price: 530.9899, Position: 50.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:52:14+0000, OrderId: 1000552264767, Instruction: BUY, Quantity: 10.0, Price: 530.995, Position: 60.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:52:14+0000, OrderId: 1000552264767, Instruction: BUY, Quantity: 40.0, Price: 530.9999, Position: 100.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:52:15+0000, OrderId: 1000552264769, Instruction: BUY, Quantity: 50.0, Price: 531.0199, Position: 150.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:52:15+0000, OrderId: 1000552264771, Instruction: BUY, Quantity: 50.0, Price: 531.0299, Position: 200.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:52:16+0000, OrderId: 1000552264773, Instruction: BUY, Quantity: 50.0, Price: 531.015, Position: 250.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:53:01+0000, OrderId: 1000552264816, Instruction: SELL, Quantity: 250.0, Price: 531.125, Position: 0.0, StrategyType: FLATTEN
+INFO:root:Time: 2024-05-21T19:53:01+0000, OrderId: 1000552264816, StrategyType: FLATTEN, Profit: 24.324000000012802
+INFO:root:Time: 2024-05-21T19:53:06+0000, OrderId: 1000552264826, Instruction: SELL_SHORT, Quantity: 100.0, Price: 531.1001, Position: -100.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:53:10+0000, OrderId: 1000552264832, Instruction: SELL_SHORT, Quantity: 100.0, Price: 531.1001, Position: -200.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:53:24+0000, OrderId: 1000552264852, Instruction: BUY_TO_COVER, Quantity: 200.0, Price: 531.135, Position: 0.0, StrategyType: FLATTEN
+INFO:root:Time: 2024-05-21T19:53:24+0000, OrderId: 1000552264852, StrategyType: FLATTEN, Profit: -6.979999999998654
+INFO:root:Time: 2024-05-21T19:53:26+0000, OrderId: 1000552264855, Instruction: BUY, Quantity: 40.0, Price: 531.16, Position: 40.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:53:26+0000, OrderId: 1000552264855, Instruction: BUY, Quantity: 10.0, Price: 531.16, Position: 50.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:53:26+0000, OrderId: 1000552264855, Instruction: BUY, Quantity: 50.0, Price: 531.16, Position: 100.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:53:27+0000, OrderId: 1000552264862, Instruction: BUY, Quantity: 100.0, Price: 531.1899, Position: 200.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:53:40+0000, OrderId: 1000552264866, Instruction: SELL, Quantity: 200.0, Price: 531.0925, Position: 0.0, StrategyType: FLATTEN
+INFO:root:Time: 2024-05-21T19:53:40+0000, OrderId: 1000552264866, StrategyType: FLATTEN, Profit: -16.489999999998872
+INFO:root:Time: 2024-05-21T19:53:42+0000, OrderId: 1000552264875, Instruction: SELL_SHORT, Quantity: 50.0, Price: 531.105, Position: -50.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:53:43+0000, OrderId: 1000552264877, Instruction: SELL_SHORT, Quantity: 50.0, Price: 531.125, Position: -100.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:53:47+0000, OrderId: 1000552264880, Instruction: SELL_SHORT, Quantity: 50.0, Price: 531.125, Position: -150.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:53:59+0000, OrderId: 1000552264921, Instruction: BUY_TO_COVER, Quantity: 150.0, Price: 531.1899, Position: 0.0, StrategyType: FLATTEN
+INFO:root:Time: 2024-05-21T19:53:59+0000, OrderId: 1000552264921, StrategyType: FLATTEN, Profit: -10.734999999993988
+INFO:root:Time: 2024-05-21T19:54:01+0000, OrderId: 1000552264931, Instruction: BUY, Quantity: 50.0, Price: 531.184, Position: 50.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:54:03+0000, OrderId: 1000552264937, Instruction: BUY, Quantity: 50.0, Price: 531.1599, Position: 100.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:54:20+0000, OrderId: 1000552264960, Instruction: BUY, Quantity: 50.0, Price: 531.17, Position: 150.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:54:31+0000, OrderId: 1000552264973, Instruction: BUY, Quantity: 50.0, Price: 531.2299, Position: 200.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:54:32+0000, OrderId: 1000552264975, Instruction: BUY, Quantity: 50.0, Price: 531.225, Position: 250.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:56:21+0000, OrderId: 1000552265174, Instruction: SELL, Quantity: 250.0, Price: 531.276, Position: 0.0, StrategyType: FLATTEN
+INFO:root:Time: 2024-05-21T19:56:21+0000, OrderId: 1000552265174, StrategyType: FLATTEN, Profit: 20.55999999998903
+INFO:root:Time: 2024-05-21T19:56:26+0000, OrderId: 1000552265181, Instruction: SELL_SHORT, Quantity: 100.0, Price: 531.275, Position: -100.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:56:35+0000, OrderId: 1000552265194, Instruction: SELL_SHORT, Quantity: 100.0, Price: 531.275, Position: -200.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:57:16+0000, OrderId: 1000552265228, Instruction: SELL_SHORT, Quantity: 50.0, Price: 531.235, Position: -250.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:57:35+0000, OrderId: 1000552265249, Instruction: BUY_TO_COVER, Quantity: 150.0, Price: 531.295, Position: -100.0, StrategyType: FLATTEN
+INFO:root:Time: 2024-05-21T19:57:35+0000, OrderId: 1000552265249, Instruction: BUY_TO_COVER, Quantity: 100.0, Price: 531.295, Position: 0.0, StrategyType: FLATTEN
+INFO:root:Time: 2024-05-21T19:57:35+0000, OrderId: 1000552265249, StrategyType: FLATTEN, Profit: -6.9999999999765805
+INFO:root:Time: 2024-05-21T19:57:37+0000, OrderId: 1000552265255, Instruction: BUY, Quantity: 100.0, Price: 531.325, Position: 100.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:57:38+0000, OrderId: 1000552265259, Instruction: BUY, Quantity: 100.0, Price: 531.329, Position: 200.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:57:42+0000, OrderId: 1000552265269, Instruction: BUY, Quantity: 50.0, Price: 531.3699, Position: 250.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:59:04+0000, OrderId: 1000552265483, Instruction: SELL, Quantity: 250.0, Price: 531.325, Position: 0.0, StrategyType: FLATTEN
+INFO:root:Time: 2024-05-21T19:59:04+0000, OrderId: 1000552265483, StrategyType: FLATTEN, Profit: -2.644999999972697
+INFO:root:Time: 2024-05-21T19:59:08+0000, OrderId: 1000552265485, Instruction: BUY, Quantity: 69.0, Price: 531.375, Position: 69.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:59:08+0000, OrderId: 1000552265485, Instruction: BUY, Quantity: 31.0, Price: 531.375, Position: 100.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:59:17+0000, OrderId: 1000552265505, Instruction: SELL, Quantity: 100.0, Price: 531.325, Position: 0.0, StrategyType: FLATTEN
+INFO:root:Time: 2024-05-21T19:59:17+0000, OrderId: 1000552265505, StrategyType: FLATTEN, Profit: -4.9999999999954525
+INFO:root:Time: 2024-05-21T19:59:18+0000, OrderId: 1000552265518, Instruction: SELL_SHORT, Quantity: 100.0, Price: 531.325, Position: -100.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:59:19+0000, OrderId: 1000552265520, Instruction: SELL_SHORT, Quantity: 100.0, Price: 531.315, Position: -200.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:59:22+0000, OrderId: 1000552265530, Instruction: SELL_SHORT, Quantity: 50.0, Price: 531.295, Position: -250.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:59:25+0000, OrderId: 1000552265536, Instruction: SELL_SHORT, Quantity: 30.0, Price: 531.2516, Position: -280.0, StrategyType: SINGLE
+INFO:root:Time: 2024-05-21T19:59:59+0000, OrderId: 1000552265610, Instruction: BUY_TO_COVER, Quantity: 280.0, Price: 531.275, Position: 0.0, StrategyType: FLATTEN
+INFO:root:Time: 2024-05-21T19:59:59+0000, OrderId: 1000552265610, StrategyType: FLATTEN, Profit: 9.29800000002615
