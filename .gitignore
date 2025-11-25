@@ -6,3 +6,15 @@ credentials.json
 private
 output
 refresh_token.log
+
+
+# IDE settings
+.idea/
+
+# Virtual environments
+.venv/
+venv/
+
+# Python junk
+__pycache__/
+*.pyc
