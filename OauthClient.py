@@ -194,7 +194,7 @@ class OAuthClient:
 
         # After user authorization, the authorization code will be obtained via the redirect URI
         authorization_code_url = input(
-            "Enter the authorization code from the callback URL: "
+            "Paste the FULL callback URL from your browser's address bar (the one that starts with https://127.0.0.1/):\n> "
         )
 
         # Find the index of 'code=' and '&session=' in the URL
