@@ -485,3 +485,85 @@ class SchwabAPIClient:
     def get_IDs(self, orders):
         order_ids = [order["orderId"] for order in orders]
         return order_ids
+
+
+
+
+
+
+    def get_option_chain(
+        self,
+        symbol,
+        contractType="ALL",
+        strikeCount=None,
+        includeUnderlyingQuote=True,
+        strategy="SINGLE",
+        interval=None,
+        strike=None,
+        range=None,
+        fromDate=None,
+        toDate=None,
+        volatility=None,
+        underlyingPrice=None,
+        interestRate=None,
+        daysToExpiration=None,
+        expMonth="ALL",
+        optionType=None,
+        entitlement=None,
+    ):
+        """
+        Fetch option chain data for an optionable symbol.
+
+        Schwab docs: GET /chains
+
+        Required:
+            symbol: underlying symbol, e.g. "AAPL"
+
+        Common params:
+            contractType: "CALL", "PUT", or "ALL" (default: ALL)
+            strikeCount: int, number of strikes around ATM
+            includeUnderlyingQuote: bool
+            strategy: "SINGLE", "VERTICAL", "BUTTERFLY", "CONDOR", etc.
+            fromDate / toDate: "yyyy-MM-dd" strings for expiry range
+        """
+
+        # Prefer configured market data base URL if present, else fallback
+        market_data_base = self.base_urls.get(
+            self.MARKET_DATA_KEY,
+            "https://api.schwabapi.com/marketdata/v1",
+        )
+        endpoint = "/chains"
+
+        params = {
+            "symbol": symbol,
+            "contractType": contractType,
+            "includeUnderlyingQuote": includeUnderlyingQuote,
+            "strategy": strategy,
+            "expMonth": expMonth,
+        }
+
+        # Only include optional params if not None
+        optional_params = {
+            "strikeCount": strikeCount,
+            "interval": interval,
+            "strike": strike,
+            "range": range,
+            "fromDate": fromDate,
+            "toDate": toDate,
+            "volatility": volatility,
+            "underlyingPrice": underlyingPrice,
+            "interestRate": interestRate,
+            "daysToExpiration": daysToExpiration,
+            "optionType": optionType,
+            "entitlement": entitlement,
+        }
+
+        for key, value in optional_params.items():
+            if value is not None:
+                params[key] = value
+
+        response = self.get_request_endpoint(market_data_base, endpoint, params=params)
+        if response:
+            # save to JSON file for inspection
+            self.save_to_file(f"chains_{symbol}", response)
+        return response
