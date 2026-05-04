@@ -2,8 +2,6 @@
 env
 __pycache__
 *token*.json
-credentials.json
-private
 output
 refresh_token.log
 
@@ -18,3 +16,8 @@ venv/
 # Python junk
 __pycache__/
 *.pyc
+
+
+# Schwab secrets
+private/credentials.json
+private/*token*.json
