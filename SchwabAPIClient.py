@@ -33,7 +33,18 @@ class SchwabAPIClient:
 
 
         # Load configuration from either custom or default config file
-        config_path = Path('config') / config_file
+        # config_path = Path('config') / config_file
+
+
+        BASE_DIR = Path(__file__).resolve().parent
+        config_path = BASE_DIR / "config" / config_file
+
+        if not config_path.exists():
+            config_path = BASE_DIR / config_file
+
+
+
+
         self.config = self._load_config(config_path)
         # print(f'config: {self.config}')
         # print(self.config.keys())
@@ -43,7 +54,14 @@ class SchwabAPIClient:
         self.base_url = self.base_urls[self.ACCOUNT_ACCESS_URL_KEY]
         # print(f'base_url: {self.base_url}')
 
-        self.oauth_client = OAuthClient(self.config['private'], credentials_file, grant_flow_type_filenames_file)
+        # self.oauth_client = OAuthClient(self.config['private'], credentials_file, grant_flow_type_filenames_file)
+        private_path = BASE_DIR / self.config["private"]
+
+        self.oauth_client = OAuthClient(
+            private_path,
+            credentials_file,
+            grant_flow_type_filenames_file
+        )
         self.account_number = None
         # Start the refresh token timer
         # print('calling asyncio')
