@@ -134,9 +134,18 @@ class SchwabAPIClient:
 
         if response.status_code == 200:
             return response.json()
+        # else:
+        #     # print(f"Failed to get data from {endpoint}. Error: {response.text}")
+        #     return None
+
         else:
-            # print(f"Failed to get data from {endpoint}. Error: {response.text}")
+            print("FAILED GET REQUEST")
+            print("URL:", url)
+            print("PARAMS:", params)
+            print("STATUS:", response.status_code)
+            print("ERROR:", response.text)
             return None
+
 
 
     def get_request_endpoint(self, base_url, endpoint, params=None):
@@ -585,3 +594,17 @@ class SchwabAPIClient:
             # save to JSON file for inspection
             self.save_to_file(f"chains_{symbol}", response)
         return response
+
+
+
+
+
+    def get_movers(self, symbol_id="EQUITY_ALL", sort="VOLUME", frequency=0):
+        endpoint = f"/marketdata/v1/movers/{symbol_id}"
+
+        params = {
+            "sort": sort,
+            "frequency": frequency,
+        }
+
+        return self.get_request(endpoint, params=params)

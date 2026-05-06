@@ -66,7 +66,9 @@ class OAuthClient:
 
     def load_grant_flow_type_filenames(self):
         try:
-            file_path = Path('config') / self.grant_flow_type_filenames_file
+            # file_path = Path('config') / self.grant_flow_type_filenames_file
+            BASE_DIR = Path(__file__).resolve().parent
+            file_path = BASE_DIR / "config" / self.grant_flow_type_filenames_file
             with open(file_path, 'r') as file:
                 self.grant_flow_type_filenames = json.load(file)
                 # print("Grant Flow Types and Filenames:")
