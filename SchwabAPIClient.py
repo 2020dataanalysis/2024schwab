@@ -14,6 +14,7 @@ class SchwabAPIClient:
     """
     ACCOUNT_ACCESS_URL_KEY = 'ACCOUNT_ACCESS'
     MARKET_DATA_KEY = 'MARKET_DATA_PRODUCTION'
+    REQUEST_TIMEOUT = 10
 
     # def __init__(self, credentials_file, grant_flow_type_filenames_file, config_file='config.json'):
         # pass
@@ -132,7 +133,12 @@ class SchwabAPIClient:
             'Accept': 'application/json'
         }
 
-        response = requests.get(url, params=params, headers=headers)
+        response = requests.get(
+            url,
+            params=params,
+            headers=headers,
+            timeout=self.REQUEST_TIMEOUT,
+        )
 
         if response.status_code == 200:
             return response.json()
@@ -198,7 +204,13 @@ class SchwabAPIClient:
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }
-        response = requests.post(url, json=data, headers=headers)
+        response = requests.post(
+            url,
+            json=data,
+            headers=headers,
+            timeout=self.REQUEST_TIMEOUT,
+        )
+
         if response.status_code == 200:
             return response.json()
         if response.status_code == 201:
@@ -221,7 +233,12 @@ class SchwabAPIClient:
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }
-        response = requests.put(url, json=data, headers=headers)
+        response = requests.put(
+            url,
+            json=data,
+            headers=headers,
+            timeout=self.REQUEST_TIMEOUT,
+        )
 
         if response.status_code == 200:
             return response.json()
@@ -240,7 +257,11 @@ class SchwabAPIClient:
         headers = {
             'Authorization': f'Bearer {self.oauth_client.access_token}'
         }
-        response = requests.delete(url, headers=headers)
+        response = requests.delete(
+            url,
+            headers=headers,
+            timeout=self.REQUEST_TIMEOUT,
+        )
 
         if response.status_code == 200:
             # print(f"Successfully deleted data from {endpoint}")

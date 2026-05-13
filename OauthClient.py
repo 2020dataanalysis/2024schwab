@@ -324,7 +324,12 @@ class OAuthClient:
             'redirect_uri': self.redirect_uri
         }
         # headers = {'Authorization': f'Basic {base64.b64encode(bytes(f"{self.app_key}:{self.app_secret}", "utf-8")).decode("utf-8")}', 'Content-Type': 'application/x-www-form-urlencoded'}
-        response = requests.post(self.token_url, data=token_params, headers=headers)
+        response = requests.post(
+            self.token_url,
+            data=token_params,
+            headers=headers,
+            timeout=15,
+        )
 
         if response.status_code == 200:
             token_response = response.json()
@@ -360,7 +365,12 @@ class OAuthClient:
             'redirect_uri': self.redirect_uri
         }
 
-        response = requests.post(self.token_url, data=token_params, headers=headers)
+        response = requests.post(
+            self.token_url,
+            data=token_params,
+            headers=headers,
+            timeout=15,
+        )
 
         if response.status_code == 200:
             token_response = response.json()
