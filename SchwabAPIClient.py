@@ -124,6 +124,8 @@ class SchwabAPIClient:
         :param params: Query parameters (optional).
         :return: JSON response if successful, None otherwise.
         """
+        # self.ensure_access_token_valid()
+
         url = f"{self.base_url}{endpoint}"
         headers = {
             'Authorization': f'Bearer {self.oauth_client.access_token}',
@@ -156,6 +158,8 @@ class SchwabAPIClient:
         :param params: Query parameters (optional).
         :return: JSON response if successful, None otherwise.
         """
+        # self.ensure_access_token_valid()
+
         url = f"{base_url}{endpoint}"
         # print(url)
         headers = {
@@ -515,6 +519,17 @@ class SchwabAPIClient:
 
 
 
+    # def ensure_access_token_valid(self):
+    #     remaining = self.oauth_client.refresh_token_timer()
+
+    #     if remaining is None:
+    #         print("⚠️ Token status unknown.")
+    #         return
+
+    #     if remaining < 60:
+    #         print("🔄 Access token refreshed or near refresh threshold.")
+
+    #     return remaining
 
 
 

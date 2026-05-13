@@ -41,6 +41,8 @@ class OAuthClient:
         # print(self.AUTHORIZATION_CODE_GRANT_FILENAME)
         # print(self.REFRESH_TOKEN_GRANT_FILENAME)
         # self.load_access_token()
+        self.last_oauth_error = None
+        self.last_oauth_event = None
         self.manage_tokens()
 
 
@@ -131,36 +133,122 @@ class OAuthClient:
             self.access_token_expiration_time = token_response['access_token_expiration_time']
             # print('Refresh Token Grant Flow --> Complete')
         else:
-            # print('Failed to Refresh Token Grant Flow')
-            pass
+            print("Refresh token failed. Starting authorization-code flow.")
+            self.authorization_code_grant_flow()
+
 
 
     def get_refresh_access_token(self):
-        # print('get_refresh_access_token')
         credentials = f"{self.app_key}:{self.app_secret}"
-        encoded_credentials = base64.b64encode(credentials.encode()).decode()
+        encoded_credentials = base64.b64encode(
+            credentials.encode()
+        ).decode()
 
         headers = {
             'Authorization': f'Basic {encoded_credentials}'
         }
 
         payload = {
-					'grant_type': 'refresh_token',
-					'refresh_token': self.refresh_token
-				}
-        # print(headers)
-        # print(payload)
-        # print(self.token_url)
+            'grant_type': 'refresh_token',
+            'refresh_token': self.refresh_token
+        }
 
-        response = requests.post(self.token_url, headers=headers, data=payload)
-        # print(response)
+        try:
+            response = requests.post(
+                self.token_url,
+                headers=headers,
+                data=payload,
+                timeout=15,
+            )
+
+        except requests.exceptions.ConnectionError as e:
+            self.last_oauth_error = {
+                "error_type": "NETWORK_CONNECTION_ERROR",
+                "timestamp": datetime.utcnow().isoformat(),
+                "message": str(e),
+            }
+
+            self.last_oauth_event = {
+                "event_type": "NETWORK_CONNECTION_ERROR",
+                "timestamp": datetime.utcnow().isoformat(),
+                "message": str(e),
+            }
+
+            print("NETWORK CONNECTION ERROR")
+            print(e)
+
+            return None
+
+        except requests.exceptions.Timeout as e:
+            self.last_oauth_error = {
+                "error_type": "NETWORK_TIMEOUT",
+                "timestamp": datetime.utcnow().isoformat(),
+                "message": str(e),
+            }
+
+            self.last_oauth_event = {
+                "event_type": "NETWORK_TIMEOUT",
+                "timestamp": datetime.utcnow().isoformat(),
+                "message": str(e),
+            }
+
+            print("NETWORK TIMEOUT")
+            print(e)
+
+            return None
+
+        except requests.exceptions.RequestException as e:
+            self.last_oauth_error = {
+                "error_type": "REQUEST_EXCEPTION",
+                "timestamp": datetime.utcnow().isoformat(),
+                "message": str(e),
+            }
+
+            self.last_oauth_event = {
+                "event_type": "REQUEST_EXCEPTION",
+                "timestamp": datetime.utcnow().isoformat(),
+                "message": str(e),
+            }
+
+            print("REQUEST EXCEPTION")
+            print(e)
+
+            return None
 
         if response.status_code == 200:
             token_response = response.json()
+
+            self.last_oauth_event = {
+                "event_type": "ACCESS_TOKEN_REFRESHED",
+                "timestamp": datetime.utcnow().isoformat(),
+                "expires_in": token_response.get("expires_in"),
+            }
+
+            print("ACCESS TOKEN REFRESHED")
+
             return token_response
-        else:
-            # print("Failed to refresh access token. Error:", response.text)
-            return None
+
+        error_payload = {
+            "status_code": response.status_code,
+            "response_text": response.text,
+            "token_url": self.token_url,
+            "grant_type": "refresh_token",
+        }
+
+        print("FAILED TO REFRESH ACCESS TOKEN")
+        print("STATUS:", response.status_code)
+        print("ERROR:", response.text)
+
+        self.last_oauth_error = error_payload
+
+        self.last_oauth_event = {
+            "event_type": "REFRESH_TOKEN_FAILED",
+            "timestamp": datetime.utcnow().isoformat(),
+            "status_code": response.status_code,
+            "response_text": response.text,
+        }
+
+        return None
 
 
     def get_authorization_code(self):
